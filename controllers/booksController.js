@@ -33,12 +33,37 @@ const getBooksAndInventory = async (req, res) =>{
         res.status(400).json(error.message);
     }
 }
+
 //Get Book by id
+const getBookById = async (req, res) =>{
+    try{
+        let bookId = req.params.BookId;
+
+        let reqBook = await Books.findOne({where: {id: bookId}});
+
+        if (reqBook !== null || reqBook !== undefined){
+            res.status(200).json(reqBook)
+        }else{
+            res.status(400).json('Book does not exist')
+        }
+    }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);
+    }
+}
 
 //Get Book And Inventory by bookID
 const getBAIById = async (req, res) =>{
     try{
+        let bookId = req.params.BookId;
 
+        let reqBook = await Books.findOne({where: {id: bookId}, include: BookInventory});
+
+        if (reqBook !== null || reqBook !== undefined){
+            res.status(200).json(reqBook)
+        }else{
+            res.status(400).json('Book does not exist')
+        }
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);
@@ -62,15 +87,12 @@ const addBook = async (req, res) =>{
             BookInventory: req.body.BookInventory
         };
 
-        let bookInven = req.body.BookInventory;
-
-        console.log(bookInven);
         let bookEntry = await Books.create(newBook, {include: [BookInventory]});
 
         if (bookEntry !== null || book !== undefined){
             res.status(201).json('Created new book:'+ bookEntry);
         }else{
-            res.status(400).json(bookEntry);
+            res.status(400).json('Could not create new book');
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -78,12 +100,62 @@ const addBook = async (req, res) =>{
     }
 }
 
-//Remove book from library
-
 //Update book details
+const updateBook = async (req, res) =>{
+   try{
+        let bookUpdate = {
+            id: req.body.id,
+            ISBN: req.body.ISBN,
+            bookTitle: req.body.bookTitle,
+            author: req.body.author,
+            genre: req.body.genre,
+            subgenre: req.body.subgenre,
+            pubDate: req.body.pubDate,
+            edition: req.body.edition,
+            publisher: req.body.publisher,
+            bookDescription: req.body.bookDescription,
+            picture: req.body.picture
+        };
+
+        let bookConf = await Books.update(bookUpdate, {where: {id: bookUpdate.id}});
+
+        if (bookConf !== null || bookConf !== undefined){
+            res.status(201).json('Updated book details');
+        }else{
+            res.status(400).json('Unable to update book');
+        }
+   }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);
+   }
+}
+
+//Remove book from library
+const deleteBook = async (req, res) =>{
+   try{
+        let bookToDel = {
+            id: req.body.id
+        };
+
+        let deletedBook = await Books.destroy({where: {id: bookToDel.id}});
+
+        if (deletedBook !== null || deletedBook !== undefined){
+            res.status(200).json(deletedBook);
+        }else{
+            res.status(400).json('Cannot delete book');  
+        }
+   }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);
+   }
+}
 
 module.exports = {
     getAllBooks,
     getBooksAndInventory,
-    addBook
+    getBookById,
+    getBAIById,
+    addBook,
+    updateBook,
+    deleteBook
 }

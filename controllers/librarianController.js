@@ -3,9 +3,12 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const Librarian = db.librarian;
 
+//Get all librarians 
+
+//Get librarian by id
+
 //Adding new librarian 
 const addLibrarian = async (req, res) =>{
-    
     try{
         //Librarian object
         let admin = {
@@ -53,7 +56,6 @@ const addLibrarian = async (req, res) =>{
 
 //Librarian login
 const librarianLogin = async (req, res) => {
-
     try{
         let libAdmin = {
                 email: req.body.email,
@@ -88,13 +90,22 @@ const librarianLogin = async (req, res) => {
 //Update librarian account
 const updateLibrarian = async (req, res) =>{
     try{
-        let libEmail = req.body.email;
+        let updatedLib ={
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password
+        }
 
-        req.body.password = await  bcrypt.hash(req.body.password, saltRounds);
+        updatedLib.password = await bcrypt.hash(req.body.password, saltRounds);
         
-        const updatedLibAdmin = await Librarian.update(req.body, {where: {email: libEmail}});
+        const updatedLibAdmin = await Librarian.update(updatedLib, {where: {email: updatedLib.email}});
 
-        res.status(201).json("Updated user");
+        if (updatedLibAdmin !== null || updatedLibAdmin !== undefined){
+            res.status(201).json("Updated user");
+        }else{
+            res.status(400).json('Unable to update')
+        }
     } catch(error){
         console.log('\nError Messsage:\n' + error);
         res.status(400).json(error.message);
@@ -106,7 +117,13 @@ const deleteLibrarian = async (req, res) =>{
     try{
         let libEmail = req.body.email;
 
-        const updatedLibAdmin = await Librarian.update(req.body, {where: {email: libEmail}});
+        let delLib =  await Librarian.destroy({where: {email: libEmail}});
+
+        if (delLib !== null || delLib !== undefined){
+            res.status(200).json(delLib);
+        }else{
+            res.status(400).json('Cannot delete librarian');
+        }
     } catch(error){
         console.log('\nError Messsage:\n' + error);
         res.status(400).json(error.message);
@@ -114,7 +131,7 @@ const deleteLibrarian = async (req, res) =>{
 }
 
 
-/**TO-DO: Update libarian(change function), Delete librarian, Get Libraian (all & one)*/
+/**TO-DO: Get Libraian (all & one)*/
 
 module.exports ={
     addLibrarian,
