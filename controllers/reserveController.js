@@ -14,7 +14,6 @@ const getAllReservations = async (req, res) =>{
 }
 
 //Get reservation by Id
-
 const getReservationById = async (req, res) =>{
     try{
         let reserveId = req.params.id;

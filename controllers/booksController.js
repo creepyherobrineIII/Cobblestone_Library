@@ -7,7 +7,7 @@ const getAllBooks = async (req, res) =>{
     try{
         let resBooks = await Books.findAll();
 
-        if(resBooks !== null || resBooks !== undefined){
+        if(resBooks.length !== 0){
             res.status(200).json(resBooks)
         }else{
             res.status(400).json('Missing data')
@@ -23,7 +23,7 @@ const getBooksAndInventory = async (req, res) =>{
     try{
         let booksAndInven = await Books.findAll({include: BookInventory});
 
-        if(booksAndInven !== null || booksAndInven !== undefined){
+        if(booksAndInven.length !== 0){
             res.status(200).json(booksAndInven)
         }else{
             res.status(400).json('Missing data')
@@ -41,7 +41,7 @@ const getBookById = async (req, res) =>{
 
         let reqBook = await Books.findOne({where: {id: bookId}});
 
-        if (reqBook !== null || reqBook !== undefined){
+        if (reqBook.length !== 0){
             res.status(200).json(reqBook)
         }else{
             res.status(400).json('Book does not exist')
@@ -59,7 +59,7 @@ const getBAIById = async (req, res) =>{
 
         let reqBook = await Books.findOne({where: {id: bookId}, include: BookInventory});
 
-        if (reqBook !== null || reqBook !== undefined){
+        if (reqBook.length !== 0){
             res.status(200).json(reqBook)
         }else{
             res.status(400).json('Book does not exist')
@@ -89,7 +89,7 @@ const addBook = async (req, res) =>{
 
         let bookConf = await Books.findAll({where: {ISBN: newBook.ISBN}});
 
-        if (bookConf == null || bookConf == undefined)
+        if (bookConf.length === 0)
         {
             let bookEntry = await Books.create(newBook, {include: [BookInventory]});
 
@@ -108,7 +108,7 @@ const addBook = async (req, res) =>{
     }
 }
 
-//Update book details
+//Update book details (TEST)
 const updateBook = async (req, res) =>{
    try{
         let bookUpdate = {

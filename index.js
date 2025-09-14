@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 const libRouter = require('./routes/librarianRouter.js');
 const memRouter = require('./routes/memberRouter.js');
 const booksRouter = require('./routes/booksRouter.js');
-const bookInventory = require('./routes/bookInvetoryRouter.js');
+const bookInventory = require('./routes/bookInventoryRouter.js');
 
 //Mounting routers
 app.use('/librarian', libRouter);

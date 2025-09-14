@@ -9,7 +9,7 @@ router.get('/', bookInventoryController.getInventory);
 router.get('/:id', bookInventoryController.getInventoryById);
 
 //Get book inventory by bookid
-router.get('/:BookId', bookInventoryController.getInventoryByBookId);
+router.get('/bookId/:BookId', bookInventoryController.getInventoryByBookId);
 
 //Add book to inventory
 router.post('/addBookToInven', bookInventoryController.addBookToInventory);

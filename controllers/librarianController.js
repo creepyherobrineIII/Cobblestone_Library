@@ -8,7 +8,7 @@ const getLibrarians = async (req, res) =>{
     try{
         let librarians = await Librarian.findAll();
 
-        if (librarians !== null || librarians !== undefined){
+        if (librarians.length !== 0){
             res.status(200).json(librarians);
         }else{
             res.status(400).json('No libraians in database');
@@ -26,7 +26,7 @@ const getLibrarianById = async (req, res) =>{
 
         let librarian = await Librarian.findAll({where: {id: libId}});
 
-        if (librarian !== null || librarian !== undefined){
+        if (librarian.length !== 0){
             res.status(200).json(librarian);
         }else{
             res.status(400).json('Invalid id');
@@ -60,7 +60,7 @@ const addLibrarian = async (req, res) =>{
 
         let libAdmin;
         
-        if (libCheck == null || libCheck == undefined)
+        if (libCheck.length === 0)
         {
             libAdmin = await Librarian.create(admin);
         } else{
@@ -95,7 +95,7 @@ const librarianLogin = async (req, res) => {
         //Check if user exists
         let libCheck = await Librarian.findOne({where: {email : libAdmin.email}});
 
-        if (libCheck == null || libCheck == undefined  || libCheck.isActive == false)
+        if (libCheck.length === 0 || libCheck.isActive == false)
         {
             res.status(401).json("Incorrect username/password");
         }

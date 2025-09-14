@@ -8,7 +8,7 @@ const getAllMembers = async (req, res) =>{
     try{
         const members = await Member.findAll();
 
-        if (members !== null || members !== undefined){
+        if (members.length !== 0){
             res.status(200).json(members);
         } else {
             res.status(400).json("No data")
@@ -35,7 +35,7 @@ const createMember = async(req, res) =>{
         //Check if member exists
         let memCheck = await Member.findOne({where: {email: newMember.email}});
 
-        if (memCheck == null || memCheck == undefined){
+        if (memCheck.length == 0){
            
             //Hash password
             const hashedPass = await bcrypt.hash(newMember.password, saltRounds);
@@ -66,7 +66,7 @@ const memberLogin = async (req, res) =>{
         //Search for member
          let memCheck = await Member.findOne({where: {email: loggingMem.email}});
 
-        if (memCheck !== null || memCheck !== undefined){
+        if (memCheck.length !== 0){
             const passCheck = await bcrypt.compare(loggingMem.password, memCheck.password);
             
             if (passCheck){

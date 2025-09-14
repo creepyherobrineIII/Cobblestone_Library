@@ -4,9 +4,10 @@ const BookInventory = db.bookInventory;
 //Get Inventory
 const getInventory = async (req, res) => {
     try{
+        
         let bookInven = await BookInventory.findAll();
 
-        if (bookInven !== null || bookInven !== undefined){
+        if (bookInven.length !== 0){
             res.status(200).json(bookInven);
         }else{
             res.status(400).json('Missing data')
@@ -24,7 +25,7 @@ const getInventoryById = async (req, res) => {
 
         let bookInven = await BookInventory.findAll({where: {id: inventoryId}});
 
-        if (bookInven !== null || bookInven !== undefined){
+        if (bookInven.length !== 0){
             res.status(200).json(bookInven);
         }else{
             res.status(400).json('Missing data')
@@ -42,7 +43,7 @@ const getInventoryByBookId = async (req, res) => {
 
         let bookInven = await BookInventory.findAll({where: {BookId: reqBookId}});
 
-        if (bookInven !== null || bookInven !== undefined){
+        if (bookInven.length !== 0){
             res.status(200).json(bookInven);
         }else{
             res.status(400).json('Missing data')
@@ -64,7 +65,7 @@ const addBookToInventory = async (req, res) =>{
 
         let bookInvenCheck = await BookInventory.findAll({where: {BookId: newBook.BookId}});
 
-        if (bookInvenCheck == null || bookInvenCheck == undefined){
+        if (bookInvenCheck.length !== 0){
             
             let addedBook = await BookInventory.create(newBook);
 
