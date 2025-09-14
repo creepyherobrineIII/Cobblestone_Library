@@ -4,8 +4,38 @@ const saltRounds = 10;
 const Librarian = db.librarian;
 
 //Get all librarians 
+const getLibrarians = async (req, res) =>{
+    try{
+        let librarians = await Librarian.findAll();
+
+        if (librarians !== null || librarians !== undefined){
+            res.status(200).json(librarians);
+        }else{
+            res.status(400).json('No libraians in database');
+        }
+    }catch(error){
+        console.log('\nError Messsage:\n' + error);
+        res.status(400).json(error.message);
+    }
+}
 
 //Get librarian by id
+const getLibrarianById = async (req, res) =>{
+    try{
+        let libId = req.params.id;
+
+        let librarian = await Librarian.findAll({where: {id: libId}});
+
+        if (librarian !== null || librarian !== undefined){
+            res.status(200).json(librarian);
+        }else{
+            res.status(400).json('Invalid id');
+        }
+    }catch(error){
+        console.log('\nError Messsage:\n' + error);
+        res.status(400).json(error.message);
+    }
+}
 
 //Adding new librarian 
 const addLibrarian = async (req, res) =>{
@@ -134,6 +164,8 @@ const deleteLibrarian = async (req, res) =>{
 /**TO-DO: Get Libraian (all & one)*/
 
 module.exports ={
+    getLibrarians,
+    getLibrarianById,
     addLibrarian,
     librarianLogin,
     updateLibrarian,

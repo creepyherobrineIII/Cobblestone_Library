@@ -18,10 +18,42 @@ const getInventory = async (req, res) => {
 };
 
 //Get inventory by Id
+const getInventoryById = async (req, res) => {
+    try{
+        let inventoryId = req.params.id;
+
+        let bookInven = await BookInventory.findAll({where: {id: inventoryId}});
+
+        if (bookInven !== null || bookInven !== undefined){
+            res.status(200).json(bookInven);
+        }else{
+            res.status(400).json('Missing data')
+        }
+    }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);
+    }
+};
 
 //Get Inventory by BookId
+const getInventoryByBookId = async (req, res) => {
+    try{
+        let reqBookId = req.params.BookId;
 
-//Add book to inventory
+        let bookInven = await BookInventory.findAll({where: {BookId: reqBookId}});
+
+        if (bookInven !== null || bookInven !== undefined){
+            res.status(200).json(bookInven);
+        }else{
+            res.status(400).json('Missing data')
+        }
+    }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);
+    }
+};
+
+//Add book copies to inventory
 const addBookToInventory = async (req, res) =>{
     try{
         let newBook = {
@@ -42,7 +74,7 @@ const addBookToInventory = async (req, res) =>{
                 res.status(400).json('Unable to add book');
             }
         }else{
-            res.status(401).json('Book has inventory');
+            res.status(401).json('Book already has inventory');
         }
     }catch(error)
     {
@@ -62,12 +94,22 @@ const updateInventory = async (req, res) =>{
 
         let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {id: reqUpdatedInven.id}});
 
-        if ()
+        if (updatedInvRec !== null || updatedInvRec !== undefined){
+            res.status(201).json('Updated book inventory');
+        }else{
+            res.status(400).json(error.message);
+        }
     }catch(error){
-
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);
     }
 }
+
+
 module.exports = {
     getInventory,
-    addBookToInventory
+    getInventoryById,
+    getInventoryByBookId,
+    addBookToInventory,
+    updateInventory
 };

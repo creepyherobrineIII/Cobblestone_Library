@@ -2,6 +2,12 @@ const librarianController = require('../controllers/librarianController.js');
 
 const router = require('express').Router();
 
+//Get All librarians
+router.get('/', librarianController.getLibrarians)
+
+//Get librarian by id
+router.get('/:id', librarianController.getLibrarianById)
+
 //Create new Librarian
 router.post('/addLibrarian', librarianController.addLibrarian);
 

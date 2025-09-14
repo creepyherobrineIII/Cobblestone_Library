@@ -3,7 +3,7 @@ const memberController = require('../controllers/memberController.js');
 const router = require('express').Router();
 
 //Get all members
-router.get('/getAllMembers', memberController.getAllMembers);
+router.get('/', memberController.getAllMembers);
 
 //Create new member
 router.post('/createMember', memberController.createMember);

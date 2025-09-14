@@ -37,7 +37,7 @@ const getBooksAndInventory = async (req, res) =>{
 //Get Book by id
 const getBookById = async (req, res) =>{
     try{
-        let bookId = req.params.BookId;
+        let bookId = req.params.id;
 
         let reqBook = await Books.findOne({where: {id: bookId}});
 
@@ -52,10 +52,10 @@ const getBookById = async (req, res) =>{
     }
 }
 
-//Get Book And Inventory by bookID
+//Get Book And Inventory by ID (TEST)
 const getBAIById = async (req, res) =>{
     try{
-        let bookId = req.params.BookId;
+        let bookId = req.params.id;
 
         let reqBook = await Books.findOne({where: {id: bookId}, include: BookInventory});
 
@@ -87,12 +87,20 @@ const addBook = async (req, res) =>{
             BookInventory: req.body.BookInventory
         };
 
-        let bookEntry = await Books.create(newBook, {include: [BookInventory]});
+        let bookConf = await Books.findAll({where: {ISBN: newBook.ISBN}});
 
-        if (bookEntry !== null || book !== undefined){
-            res.status(201).json('Created new book:'+ bookEntry);
+        if (bookConf == null || bookConf == undefined)
+        {
+            let bookEntry = await Books.create(newBook, {include: [BookInventory]});
+
+            if (bookEntry !== null || book !== undefined){
+                res.status(201).json('Created new book:'+ bookEntry);
+            }else{
+                res.status(400).json('Could not create new book');
+            }
+
         }else{
-            res.status(400).json('Could not create new book');
+            res.status(400).json('Book already exists in database');
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -133,11 +141,9 @@ const updateBook = async (req, res) =>{
 //Remove book from library
 const deleteBook = async (req, res) =>{
    try{
-        let bookToDel = {
-            id: req.body.id
-        };
+        let bookToDel = req.params.id
 
-        let deletedBook = await Books.destroy({where: {id: bookToDel.id}});
+        let deletedBook = await Books.destroy({where: {id: bookToDel}});
 
         if (deletedBook !== null || deletedBook !== undefined){
             res.status(200).json(deletedBook);
