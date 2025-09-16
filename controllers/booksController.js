@@ -39,7 +39,7 @@ const getBookById = async (req, res) =>{
     try{
         let bookId = req.params.id;
 
-        let reqBook = await Books.findOne({where: {id: bookId}});
+        let reqBook = await Books.findAll({where: {id: bookId}});
 
         if (reqBook.length !== 0){
             res.status(200).json(reqBook)
@@ -57,7 +57,7 @@ const getBAIById = async (req, res) =>{
     try{
         let bookId = req.params.id;
 
-        let reqBook = await Books.findOne({where: {id: bookId}, include: BookInventory});
+        let reqBook = await Books.findAll({where: {id: bookId}, include: BookInventory});
 
         if (reqBook.length !== 0){
             res.status(200).json(reqBook)

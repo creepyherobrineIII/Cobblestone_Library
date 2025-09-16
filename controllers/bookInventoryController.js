@@ -4,7 +4,6 @@ const BookInventory = db.bookInventory;
 //Get Inventory
 const getInventory = async (req, res) => {
     try{
-        
         let bookInven = await BookInventory.findAll();
 
         if (bookInven.length !== 0){
@@ -23,12 +22,16 @@ const getInventoryById = async (req, res) => {
     try{
         let inventoryId = req.params.id;
 
-        let bookInven = await BookInventory.findAll({where: {id: inventoryId}});
+        if(inventoryId > 0){
+            let bookInven = await BookInventory.findAll({where: {id: inventoryId}});
 
-        if (bookInven.length !== 0){
-            res.status(200).json(bookInven);
+            if (bookInven.length !== 0){
+                res.status(200).json(bookInven);
+            }else{
+                res.status(400).json('Missing data')
+            }
         }else{
-            res.status(400).json('Missing data')
+            res.status(400).json('Inventory yet to be entered')
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -41,13 +44,18 @@ const getInventoryByBookId = async (req, res) => {
     try{
         let reqBookId = req.params.BookId;
 
-        let bookInven = await BookInventory.findAll({where: {BookId: reqBookId}});
+        if(reqBookIdId > 0){
+            let bookInven = await BookInventory.findAll({where: {BookId: reqBookId}});
 
-        if (bookInven.length !== 0){
-            res.status(200).json(bookInven);
+            if (bookInven.length !== 0){
+                res.status(200).json(bookInven);
+            }else{
+                res.status(400).json('Missing data')
+            }
         }else{
-            res.status(400).json('Missing data')
+            res.status(400).json('Inventory yet to be entered')
         }
+        
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);
@@ -65,7 +73,7 @@ const addBookToInventory = async (req, res) =>{
 
         let bookInvenCheck = await BookInventory.findAll({where: {BookId: newBook.BookId}});
 
-        if (bookInvenCheck.length !== 0){
+        if (bookInvenCheck.length === 0){
             
             let addedBook = await BookInventory.create(newBook);
 

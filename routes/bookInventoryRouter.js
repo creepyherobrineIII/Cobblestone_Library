@@ -2,6 +2,7 @@ const bookInventoryController = require('../controllers/bookInventoryController.
 
 const router = require('express').Router();
 
+//GET Methods
 //Get book inventory (all)
 router.get('/', bookInventoryController.getInventory);
 
@@ -9,12 +10,20 @@ router.get('/', bookInventoryController.getInventory);
 router.get('/:id', bookInventoryController.getInventoryById);
 
 //Get book inventory by bookid
-router.get('/bookId/:BookId', bookInventoryController.getInventoryByBookId);
+router.get('/book-id/:BookId', bookInventoryController.getInventoryByBookId);
 
+
+
+//POST Methods
 //Add book to inventory
-router.post('/addBookToInven', bookInventoryController.addBookToInventory);
+router.post('/add-book-to-inventory', bookInventoryController.addBookToInventory);
 
+
+
+//PUT Methods
 //Update inventory
 router.put('/update', bookInventoryController.updateInventory);
+
+//DELETE Methods
 
 module.exports = router;

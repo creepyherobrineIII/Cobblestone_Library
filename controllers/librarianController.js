@@ -11,7 +11,7 @@ const getLibrarians = async (req, res) =>{
         if (librarians.length !== 0){
             res.status(200).json(librarians);
         }else{
-            res.status(400).json('No libraians in database');
+            res.status(400).json('No librarians in database');
         }
     }catch(error){
         console.log('\nError Messsage:\n' + error);
@@ -53,10 +53,8 @@ const addLibrarian = async (req, res) =>{
 
         admin.password = hashedPass;
 
-        console.log()
-
         //Check if user exists already
-        let libCheck = await Librarian.findOne({where: {email : admin.email}});
+        let libCheck = await Librarian.findAll({where: {email : admin.email}});
 
         let libAdmin;
         
@@ -93,7 +91,7 @@ const librarianLogin = async (req, res) => {
             }
 
         //Check if user exists
-        let libCheck = await Librarian.findOne({where: {email : libAdmin.email}});
+        let libCheck = await Librarian.findAll({where: {email : libAdmin.email}});
 
         if (libCheck.length === 0 || libCheck.isActive == false)
         {
@@ -160,8 +158,6 @@ const deleteLibrarian = async (req, res) =>{
     }
 }
 
-
-/**TO-DO: Get Libraian (all & one)*/
 
 module.exports ={
     getLibrarians,
