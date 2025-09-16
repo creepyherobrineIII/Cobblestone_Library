@@ -90,7 +90,30 @@ const getLoansForBook = async (req, res) =>{
 //Create new loan
 const createLoan = async (req, res) =>{
     try{
-        
+        let newLoan = {
+            loanStatus: req.body.loanStatus,
+            loanStartDate: req.body.loanStartDate,
+            loanDueDate: req.body.loanDueDate,
+            loanReturnDate: req.body.ReturnDate,
+            loanFee: req.body.loanFee,
+            MemberId: req.body.MemberId,
+            BookId: req.body.BookId
+        };
+
+        if (newLoan !== null || newLoan !== undefined){
+            let loanCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, BookId: newLoan.BookId}});
+
+            if (loanCheck.length === 0){
+                let returnedLoan = await Loans.create(newLoan);
+
+                res.status(201).json('Created loan:\n' + returnedLoan); 
+            }else{
+               res.status(400).json('Loan already exists'); 
+            }
+        }else{
+            res.status(400).json('Incomplete loan data');
+        }
+
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);   
@@ -134,5 +157,6 @@ module.exports ={
     getLoansById,
     getLoansForMem,
     getLoansForBook,
+    createLoan,
     deleteLoan
 }

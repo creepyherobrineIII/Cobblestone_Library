@@ -12,12 +12,16 @@ const libRouter = require('./routes/librarianRouter.js');
 const memRouter = require('./routes/memberRouter.js');
 const booksRouter = require('./routes/booksRouter.js');
 const bookInventory = require('./routes/bookInventoryRouter.js');
+const reserveRouter = require('./routes/reserveRouter.js');
+const loansRouter = require('./routes/loansRouter.js');
 
 //Mounting routers
 app.use('/librarian', libRouter);
 app.use('/member', memRouter);
 app.use('/books', booksRouter);
 app.use('/inventory', bookInventory);
+app.use('/reservation', reserveRouter);
+app.use('/loans', loansRouter);
 
 
 //Testing API

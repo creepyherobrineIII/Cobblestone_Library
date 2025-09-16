@@ -17,6 +17,8 @@ router.get('/book-id/:BookId', loansController.getLoansForBook);
 
 //POST Methods
 //Create a loan
+router.post('/create-loan', loansController.createLoan);
+
 
 //PUT Methods
 //Update a loan
