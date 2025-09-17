@@ -7,7 +7,7 @@ const router = require('express').Router();
 router.get('/', memberController.getAllMembers);
 
 //Get member by Id
-router.get('/:id', memberController.getMemberById);
+router.get('/byId/:id', memberController.getMemberById);
 
 //Login member
 router.get('/member-login', memberController.memberLogin);
@@ -17,9 +17,10 @@ router.get('/member-login', memberController.memberLogin);
 router.post('/create-member', memberController.createMember);
 
 //PUT Methods
+router.put('/update', memberController.updateMember)
 
 //DELETE Methods
-
+router.delete('/delete', memberController.delMember)
 
 
 module.exports = router;

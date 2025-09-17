@@ -7,7 +7,7 @@ const router = require('express').Router();
 router.get('/', librarianController.getLibrarians)
 
 //Get librarian by id
-router.get('/:id', librarianController.getLibrarianById)
+router.get('/byId/:id', librarianController.getLibrarianById)
 
 //Login librarian
 router.get('/librarian-login', librarianController.librarianLogin);

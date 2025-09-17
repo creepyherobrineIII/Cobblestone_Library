@@ -24,10 +24,14 @@ const getLibrarianById = async (req, res) =>{
     try{
         let libId = req.params.id;
 
-        let librarian = await Librarian.findAll({where: {id: libId}});
+        if (libId > 0){
+            let librarian = await Librarian.findOne({where: {id: libId}});
 
-        if (librarian.length !== 0){
-            res.status(200).json(librarian);
+            if (librarian !== null){
+                res.status(200).json(librarian);
+            }else{
+                res.status(400).json('Librarian does not exist');
+            }
         }else{
             res.status(400).json('Invalid id');
         }
@@ -91,9 +95,9 @@ const librarianLogin = async (req, res) => {
             }
 
         //Check if user exists
-        let libCheck = await Librarian.findAll({where: {email : libAdmin.email}});
+        let libCheck = await Librarian.findOne({where: {email : libAdmin.email}});
 
-        if (libCheck.length === 0 || libCheck.isActive == false)
+        if (libCheck === null)
         {
             res.status(401).json("Incorrect username/password");
         }
@@ -130,9 +134,9 @@ const updateLibrarian = async (req, res) =>{
         const updatedLibAdmin = await Librarian.update(updatedLib, {where: {email: updatedLib.email}});
 
         if (updatedLibAdmin !== null || updatedLibAdmin !== undefined){
-            res.status(201).json("Updated user");
+            res.status(201).json("Updated librarian details");
         }else{
-            res.status(400).json('Unable to update')
+            res.status(400).json('Librarian to update not detected')
         }
     } catch(error){
         console.log('\nError Messsage:\n' + error);
@@ -145,12 +149,12 @@ const deleteLibrarian = async (req, res) =>{
     try{
         let libEmail = req.body.email;
 
-        let delLib =  await Librarian.destroy({where: {email: libEmail}});
+        let delLibCount =  await Librarian.destroy({where: {email: libEmail}});
 
-        if (delLib !== null || delLib !== undefined){
-            res.status(200).json(delLib);
+        if (delLibCount !== 0){
+            res.status(200).json(delLibCount);
         }else{
-            res.status(400).json('Cannot delete librarian');
+            res.status(400).json('Librarian does not exist');
         }
     } catch(error){
         console.log('\nError Messsage:\n' + error);

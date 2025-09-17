@@ -7,7 +7,7 @@ const router = require('express').Router();
 router.get('/', loansController.getAllLoans);
 
 //Get loan by Id
-router.get('/:id', loansController.getLoansById);
+router.get('/byId/:id', loansController.getLoansById);
 
 //Get all loans for one member by member ID
 router.get('/member-id/:MemberId', loansController.getLoansForMem);

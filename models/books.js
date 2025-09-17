@@ -57,6 +57,11 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
+
+        bookFormat:{
+            type: DataTypes.STRING(15),
+            allowNull: false
+        },
         
         picture:{
             type: DataTypes.TEXT,

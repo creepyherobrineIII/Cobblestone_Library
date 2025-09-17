@@ -83,6 +83,7 @@ const addBook = async (req, res) =>{
             edition: req.body.edition,
             publisher: req.body.publisher,
             bookDescription: req.body.bookDescription,
+            bookFormat: req.body.bookFormat,
             picture: req.body.picture,
             BookInventory: req.body.BookInventory
         };
@@ -112,7 +113,6 @@ const addBook = async (req, res) =>{
 const updateBook = async (req, res) =>{
    try{
         let bookUpdate = {
-            id: req.body.id,
             ISBN: req.body.ISBN,
             bookTitle: req.body.bookTitle,
             author: req.body.author,
@@ -122,10 +122,11 @@ const updateBook = async (req, res) =>{
             edition: req.body.edition,
             publisher: req.body.publisher,
             bookDescription: req.body.bookDescription,
+            bookFormat: req.body.bookFormat,
             picture: req.body.picture
         };
 
-        let bookConf = await Books.update(bookUpdate, {where: {id: bookUpdate.id}});
+        let bookConf = await Books.update(bookUpdate, {where: {ISBN: bookUpdate.ISBN}});
 
         if (bookConf !== null || bookConf !== undefined){
             res.status(201).json('Updated book details');

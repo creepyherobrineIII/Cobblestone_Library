@@ -7,7 +7,7 @@ const router = require('express').Router();
 router.get('/', reservationController.getAllReservations);
 
 //Get reservation by id
-router.get('/:id', reservationController.getReservationById);
+router.get('/byId/:id', reservationController.getReservationById);
 
 //Get reservation by book id
 router.get('/book-id/:BookId', reservationController.getReservationByBook);

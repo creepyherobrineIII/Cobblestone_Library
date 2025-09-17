@@ -26,9 +26,9 @@ const getMemberById = async (req, res) =>{
         let memId = req.params.id;
 
         if (memId > 0){
-            let member = await Member.findAll({where: {id: memId}});
+            let member = await Member.findOne({where: {id: memId}});
 
-            if (member.length !== 0){
+            if (member){
                 res.status(200).json(member);
             }else{
                 res.status(400).json('Member does not exist');
@@ -55,9 +55,9 @@ const createMember = async(req, res) =>{
         }
 
         //Check if member exists
-        let memCheck = await Member.findAll({where: {email: newMember.email}});
+        let memCheck = await Member.findOne({where: {email: newMember.email}});
 
-        if (memCheck.length == 0){
+        if (memCheck === null){
            
             //Hash password
             const hashedPass = await bcrypt.hash(newMember.password, saltRounds);
@@ -86,7 +86,7 @@ const memberLogin = async (req, res) =>{
         }
 
         //Search for member
-         let memCheck = await Member.findAll({where: {email: loggingMem.email}});
+         let memCheck = await Member.findOne({where: {email: loggingMem.email}});
 
         if (memCheck.length !== 0){
             const passCheck = await bcrypt.compare(loggingMem.password, memCheck.password);
@@ -105,13 +105,59 @@ const memberLogin = async (req, res) =>{
     }
 }
 
+//Update member details
+const updateMember = async (req, res) =>{
+    try{
+        let updatedMember = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            phoneNo: req.body.phoneNo,
+            address: req.body.address,
+            email:  req.body.email,
+            password: req.body.password
+        }
+
+        updatedMember.password = await bcrypt.hash(req.body.password, saltRounds);
+                
+        const updatedMem = await Member.update(updatedMember, {where: {email: updatedMember.email}});
+
+        if (updatedMem !== null || updatedMem !== undefined){
+            res.status(201).json("Updated member details");
+        }else{
+            res.status(400).json('Member does not exist')
+        }
+
+    }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);   
+    }
+}
+
+const delMember = async (req, res) =>{
+    try{
+        memToDelEmail = req.body.email;
+
+        let deletedMemCount = await Member.destroy({where: {email: memToDelEmail}});
+
+        if (deletedMemCount >0){
+            res.status(200).json(`Members deleted: ${deletedMemCount}`);  
+        }else{
+            res.status(400).json('Member does not exist');  
+        }
+    }catch(error){
+        console.log('\nError Message:\n', error);
+        res.status(400).json(error.message);    
+    }
+}
 
 
-/**TO-DO: Update member, Delete member*/
+/**TO-DO: Delete member*/
 
 module.exports = {
     getAllMembers,
     getMemberById,
     createMember,
-    memberLogin
+    memberLogin,
+    updateMember,
+    delMember
 }

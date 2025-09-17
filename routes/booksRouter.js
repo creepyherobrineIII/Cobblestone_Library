@@ -11,7 +11,7 @@ router.get('/', booksController.getAllBooks);
 router.get('/inventory', booksController.getBooksAndInventory);
 
 //Get book by id
-router.get('/:id', booksController.getBookById)
+router.get('/byId/:id', booksController.getBookById)
 
 //Get book & inventory by id
 router.get('get-BAI-by-id/:id', booksController.getBAIById)

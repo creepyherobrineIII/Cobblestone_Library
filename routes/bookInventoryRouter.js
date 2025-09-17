@@ -7,7 +7,7 @@ const router = require('express').Router();
 router.get('/', bookInventoryController.getInventory);
 
 //Get book inventory by id
-router.get('/:id', bookInventoryController.getInventoryById);
+router.get('/byId/:id', bookInventoryController.getInventoryById);
 
 //Get book inventory by bookid
 router.get('/book-id/:BookId', bookInventoryController.getInventoryByBookId);

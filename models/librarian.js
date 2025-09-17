@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) =>{
 
     const Librarian = sequelize.define('librarian', {
-       libId:{
+       id:{
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
