@@ -44,7 +44,7 @@ const getInventoryByBookId = async (req, res) => {
     try{
         let reqBookId = req.params.BookId;
 
-        if(reqBookIdId > 0){
+        if(reqBookId > 0){
             let bookInven = await BookInventory.findAll({where: {BookId: reqBookId}});
 
             if (bookInven.length !== 0){
