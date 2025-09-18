@@ -101,9 +101,9 @@ const updateInventory = async (req, res) =>{
             availableCopies: req.body.availableCopies
         };
 
-        let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {id: reqUpdatedInven.id}});
+        let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {id: reqUpdatedInven.id}, returning: true});
 
-        if (updatedInvRec !== null || updatedInvRec !== undefined){
+        if (updatedInvRec[1] !== 0){
             res.status(201).json('Updated book inventory');
         }else{
             res.status(400).json(error.message);

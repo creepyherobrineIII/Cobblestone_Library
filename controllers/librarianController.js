@@ -131,9 +131,9 @@ const updateLibrarian = async (req, res) =>{
 
         updatedLib.password = await bcrypt.hash(req.body.password, saltRounds);
         
-        const updatedLibAdmin = await Librarian.update(updatedLib, {where: {email: updatedLib.email}});
+        const updatedLibAdmin = await Librarian.update(updatedLib, {where: {email: updatedLib.email}, returning: true});
 
-        if (updatedLibAdmin !== null || updatedLibAdmin !== undefined){
+        if (updatedLibAdmin[1] !== 0){
             res.status(201).json("Updated librarian details");
         }else{
             res.status(400).json('Librarian to update not detected')
@@ -151,7 +151,7 @@ const deleteLibrarian = async (req, res) =>{
 
         let delLibCount =  await Librarian.destroy({where: {email: libEmail}});
 
-        if (delLibCount !== 0){
+        if (delLibCount > 0){
             res.status(200).json(delLibCount);
         }else{
             res.status(400).json('Librarian does not exist');

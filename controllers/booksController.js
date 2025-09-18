@@ -10,7 +10,7 @@ const getAllBooks = async (req, res) =>{
         if(resBooks.length !== 0){
             res.status(200).json(resBooks)
         }else{
-            res.status(400).json('Missing data')
+            res.status(400).json('No books in database')
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -26,7 +26,7 @@ const getBooksAndInventory = async (req, res) =>{
         if(booksAndInven.length !== 0){
             res.status(200).json(booksAndInven)
         }else{
-            res.status(400).json('Missing data')
+            res.status(400).json('No books and inventory in database')
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -39,13 +39,19 @@ const getBookById = async (req, res) =>{
     try{
         let bookId = req.params.id;
 
-        let reqBook = await Books.findAll({where: {id: bookId}});
+        if (bookId > 0){
+            let reqBook = await Books.findOne({where: {id: bookId}});
 
-        if (reqBook.length !== 0){
-            res.status(200).json(reqBook)
+            if (reqBook !== null){
+                res.status(200).json(reqBook)
+            }else{
+                res.status(400).json('Book does not exist')
+            }
         }else{
-            res.status(400).json('Book does not exist')
+            res.status(400).json('Invalid ID Value');
         }
+
+        
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);
@@ -92,12 +98,16 @@ const addBook = async (req, res) =>{
 
         if (bookConf.length === 0)
         {
-            let bookEntry = await Books.create(newBook, {include: [BookInventory]});
+            if (newBook.BookInventory !== undefined){
+                let bookEntry = await Books.create(newBook, {include: [BookInventory]});
 
-            if (bookEntry !== null || book !== undefined){
-                res.status(201).json('Created new book:'+ bookEntry);
+                if (bookEntry !== null || book !== undefined){
+                    res.status(201).json('Created new book:'+ JSON.stringify(bookEntry));
+                }else{
+                    res.status(400).json('Could not create new book');
+                }
             }else{
-                res.status(400).json('Could not create new book');
+                res.status(400).json('Book inventory cannot be null');
             }
 
         }else{
@@ -126,10 +136,12 @@ const updateBook = async (req, res) =>{
             picture: req.body.picture
         };
 
-        let bookConf = await Books.update(bookUpdate, {where: {ISBN: bookUpdate.ISBN}});
+        let bookConf = await Books.update(bookUpdate, {where: {ISBN: bookUpdate.ISBN}, returning: true});
 
-        if (bookConf !== null || bookConf !== undefined){
-            res.status(201).json('Updated book details');
+        console.log(bookConf);
+
+        if (bookConf[1] !== 0){
+            res.status(201).json('Updated book details:');
         }else{
             res.status(400).json('Unable to update book');
         }
@@ -144,10 +156,10 @@ const deleteBook = async (req, res) =>{
    try{
         let bookToDel = req.params.id
 
-        let deletedBook = await Books.destroy({where: {id: bookToDel}});
+        let deletedBookCount = await Books.destroy({where: {id: bookToDel}});
 
-        if (deletedBook !== null || deletedBook !== undefined){
-            res.status(200).json(deletedBook);
+        if (deletedBookCount > 0){
+            res.status(200).json(deletedBookCount);
         }else{
             res.status(400).json('Cannot delete book');  
         }

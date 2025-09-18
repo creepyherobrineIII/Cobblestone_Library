@@ -130,10 +130,10 @@ const deleteReservation = async (req, res) =>{
         let resId = req.params.id;
 
         if (resId > 0){
-            let delResRec = await Reserve.destroy({where: {id: resId}});
+            let delResRecCount = await Reserve.destroy({where: {id: resId}});
 
-            if (delResRec !== null || delResRec !== null){
-                res.status(200).json(delResRec);
+            if (delResRecCount > 0){
+                res.status(200).json(delResRecCount > 0);
             }else{
                 res.status(400).json('Reservation does not exist');
             }

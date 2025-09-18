@@ -14,7 +14,7 @@ router.get('/inventory', booksController.getBooksAndInventory);
 router.get('/byId/:id', booksController.getBookById)
 
 //Get book & inventory by id
-router.get('get-BAI-by-id/:id', booksController.getBAIById)
+router.get('/BAI-byId/:id', booksController.getBAIById)
 
 
 //POST Methods

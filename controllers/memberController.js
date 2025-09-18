@@ -119,9 +119,9 @@ const updateMember = async (req, res) =>{
 
         updatedMember.password = await bcrypt.hash(req.body.password, saltRounds);
                 
-        const updatedMem = await Member.update(updatedMember, {where: {email: updatedMember.email}});
+        const updatedMem = await Member.update(updatedMember, {where: {email: updatedMember.email}, returning: true});
 
-        if (updatedMem !== null || updatedMem !== undefined){
+        if (updatedMem[1] !== 0){
             res.status(201).json("Updated member details");
         }else{
             res.status(400).json('Member does not exist')
@@ -139,7 +139,7 @@ const delMember = async (req, res) =>{
 
         let deletedMemCount = await Member.destroy({where: {email: memToDelEmail}});
 
-        if (deletedMemCount >0){
+        if (deletedMemCount > 0){
             res.status(200).json(`Members deleted: ${deletedMemCount}`);  
         }else{
             res.status(400).json('Member does not exist');  

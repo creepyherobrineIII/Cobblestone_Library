@@ -136,10 +136,10 @@ const deleteLoan = async (req, res) =>{
         let loanId = req.params.id;
 
         if(loanId > 0){
-            let deletedLoan = await Loans.destroy({where: {id: loanId}});
+            let deletedLoanCount = await Loans.destroy({where: {id: loanId}});
 
-            if (deletedLoan !== null || deletedLoan !== undefined){
-                res.status(200).json(deletedLoan);
+            if (deletedLoanCount > 0){
+                res.status(200).json(deletedLoanCount);
             }else{
                 res.status(400).json('Loan data does not exist');  
             }
