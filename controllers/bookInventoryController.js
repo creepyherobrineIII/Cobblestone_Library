@@ -9,7 +9,7 @@ const getInventory = async (req, res) => {
         if (bookInven.length !== 0){
             res.status(200).json(bookInven);
         }else{
-            res.status(400).json('Missing data')
+            res.status(400).json('No book inventory')
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -28,7 +28,7 @@ const getInventoryById = async (req, res) => {
             if (bookInven.length !== 0){
                 res.status(200).json(bookInven);
             }else{
-                res.status(400).json('Missing data')
+                res.status(400).json('Could not get book inventory')
             }
         }else{
             res.status(400).json('Inventory yet to be entered')
@@ -50,7 +50,7 @@ const getInventoryByBookId = async (req, res) => {
             if (bookInven.length !== 0){
                 res.status(200).json(bookInven);
             }else{
-                res.status(400).json('Missing data')
+                res.status(400).json('Could not get book inventory')
             }
         }else{
             res.status(400).json('Inventory yet to be entered')
