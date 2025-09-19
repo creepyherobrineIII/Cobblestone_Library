@@ -9,9 +9,8 @@ router.get('/', bookInventoryController.getInventory);
 //Get book inventory by id
 router.get('/byId/:id', bookInventoryController.getInventoryById);
 
-//Get book inventory by bookid
-router.get('/book-id/:BookId', bookInventoryController.getInventoryByBookId);
-
+//Get book inventory by BookISBN
+router.get('/book-isbn/:BookISBN', bookInventoryController.getInventoryByISBN);
 
 
 //POST Methods

@@ -10,7 +10,7 @@ router.get('/', reservationController.getAllReservations);
 router.get('/byId/:id', reservationController.getReservationById);
 
 //Get reservation by book id
-router.get('/book-id/:BookId', reservationController.getReservationByBook);
+router.get('/book-isbn/:BookISBN', reservationController.getReservationByBook);
 
 //Get reservation by member id
 router.get('/member-id/:MemberId', reservationController.getAllReservations);

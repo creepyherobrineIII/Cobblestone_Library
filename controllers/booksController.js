@@ -102,7 +102,7 @@ const addBook = async (req, res) =>{
                 let bookEntry = await Books.create(newBook, {include: [BookInventory]});
 
                 if (bookEntry !== null || book !== undefined){
-                    res.status(201).json('Created new book:'+ JSON.stringify(bookEntry));
+                    res.status(201).json('Created new book:\n'+ JSON.stringify(bookEntry));
                 }else{
                     res.status(400).json('Could not create new book');
                 }

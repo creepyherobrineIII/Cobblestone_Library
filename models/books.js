@@ -10,6 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
         ISBN:{
             type: DataTypes.STRING(13),
             allowNull: false,
+            unique: true,
             validate:{
                 len:{
                     args: [13,13],

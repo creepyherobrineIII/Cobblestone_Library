@@ -39,41 +39,49 @@ db.member = require('./member.js')(sequelize, DataTypes);
 db.books = require('./books.js')(sequelize, DataTypes);
 db.bookInventory = require('./bookInventory.js')(sequelize, DataTypes);
 db.loans = require('./loans.js')(sequelize, DataTypes);
-db.reserve = require('./reserve.js')(sequelize, DataTypes);
+db.reservations = require('./reservations.js')(sequelize, DataTypes);
 
 
 //Associations
 
 //Books:BookInventory
 db.books.hasOne(db.bookInventory, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
+    sourceKey: 'ISBN',
+    foreignKey: 'BookISBN'
 });
-db.bookInventory.belongsTo(db.books);
+
 
 //Member:Loans
 db.member.hasMany(db.loans,{
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
+    sourceKey: 'MemberCardID',
+    foreignKey: 'MemberId'
 });
-db.loans.belongsTo(db.member);
 
 
-//Member:Reservations
-db.member.hasMany(db.reserve,{
-    onDelete: 'CASCADE'
+//Member:r\Reservations
+db.member.hasMany(db.reservations,{
+    onDelete: 'CASCADE',
+    sourceKey: 'MemberCardID',
+    foreignKey: 'MemberId'
 });
-db.reserve.belongsTo(db.member);
 
 //Book: Loans
 db.books.hasMany(db.loans,{
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
+    sourceKey: 'ISBN',
+    foreignKey: 'BookISBN'
 });
-db.loans.belongsTo(db.books);
+
 
 //Book: Reservations
-db.books.hasMany(db.reserve,{
-    onDelete: 'CASCADE'
+db.books.hasMany(db.reservations,{
+    onDelete: 'CASCADE',
+    sourceKey: 'ISBN',
+    foreignKey: 'BookISBN'
 });
-db.reserve.belongsTo(db.books);
+
 
 db.Sequelize.sync({force : false})
 .then(() =>{

@@ -8,6 +8,12 @@ module.exports = (Sequelize, DataTypes) => {
             primaryKey: true
         },
 
+        MemberCardID:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        },
+
         firstName:{
             type: DataTypes.STRING,
             allowNull: false

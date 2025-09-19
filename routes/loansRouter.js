@@ -13,7 +13,7 @@ router.get('/byId/:id', loansController.getLoansById);
 router.get('/member-id/:MemberId', loansController.getLoansForMem);
 
 //Get all loans for a book by book id
-router.get('/book-id/:BookId', loansController.getLoansForBook);
+router.get('/book-isbn/:BookISBN', loansController.getLoansForBook);
 
 //POST Methods
 //Create a loan

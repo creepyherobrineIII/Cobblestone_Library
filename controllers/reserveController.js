@@ -1,10 +1,10 @@
 const db = require('../models/modelIndex.js');
-const Reserve = db.reserve;
+const Reservations = db.reservations;
 
 //Get all reservations
 const getAllReservations = async (req, res) =>{
     try{
-        let reservations = await Reserve.findAll();
+        let reservations = await Reservations.findAll();
 
         if (reservations.length !== 0)
         {
@@ -25,9 +25,9 @@ const getReservationById = async (req, res) =>{
 
         if(reserveID > 0)
         {
-            let reserveRec = await Reserve.findAll({where: {id: reserveId}});
+            let reserveRec = await Reservations.findOne({where: {id: reserveId}});
 
-            if (reserveRec.length !== 0){
+            if (reserveRec !== null){
                 res.status(200).json(reserveRec);
             }else{
                 res.status(400).json('Reservation does not exist');
@@ -50,7 +50,7 @@ const getReservationByBook = async (req, res) =>{
 
         if (bookId > 0)
         {
-            let reserveRec = await Reserve.findAll({where: {BookId: bookId}});
+            let reserveRec = await Reservations.findAll({where: {BookId: bookId}});
 
             if (reserveRec.length !== 0){
                 res.status(200).json(reserveRec);
@@ -73,7 +73,7 @@ const getReservationByMemId = async (req, res) =>{
 
         if(reserveID > 0)
         {
-            let reserveRec = await Reserve.findAll({where: {MemberId: memId}});
+            let reserveRec = await Reservations.findAll({where: {MemberId: memId}});
 
             if (reserveRec.length !== 0){
                 res.status(200).json(reserveRec);
@@ -102,10 +102,10 @@ const createReservation = async (req, res) =>{
 
     if (newReservation !== null || newReservation !== undefined){
 
-        let reserveCheck = await Reserve.findAll({where: {MemberId: newReservation.MemberId, BookId: newReservation.BookId}});
+        let reserveCheck = await Reservations.findOne({where: {MemberId: newReservation.MemberId, BookId: newReservation.BookId}});
 
-        if (reserveCheck.length === 0){
-            let createdRes = await Reserve.create(newReservation);
+        if (reserveCheck === null){
+            let createdRes = await Reservations.create(newReservation);
 
             if (createdRes !== null || createdRes !== undefined){
                 res.status(201).json(createdRes);
@@ -130,7 +130,7 @@ const deleteReservation = async (req, res) =>{
         let resId = req.params.id;
 
         if (resId > 0){
-            let delResRecCount = await Reserve.destroy({where: {id: resId}});
+            let delResRecCount = await Reservations.destroy({where: {id: resId}});
 
             if (delResRecCount > 0){
                 res.status(200).json(delResRecCount > 0);

@@ -1,5 +1,6 @@
 const db = require('../models/modelIndex.js');
 const bcrypt = require('bcrypt');
+const { Op } = require('sequelize')
 const saltRounds = 10;
 const Member = db.member;
 
@@ -61,7 +62,35 @@ const createMember = async(req, res) =>{
            
             //Hash password
             const hashedPass = await bcrypt.hash(newMember.password, saltRounds);
-            newMember.password = hashedPass
+            newMember.password = hashedPass;
+
+            //Generating unique member Id based on date and and number of members created in that month and year as well 3 letters of 
+            // first name
+            const now = new Date();
+            const year = now.getUTCFullYear();
+            const month = now.getUTCMonth() + 1;
+            const dateSearch = year.toString() + month.toString().padStart(2, '0');
+
+            let memCountFYM = await Member.count({
+                where: {
+                    MemberCardID: {
+                        [Op.like]: `${dateSearch}%`
+                    }
+                }})
+
+            
+
+            memCountFYM = memCountFYM + 1;
+
+            let hash = 0;
+
+            for (let i = 0; i < 3; i++){
+                hash += newMember.firstName.charCodeAt(i);
+            }
+
+            const memberMonthCounter = memCountFYM.toString();
+
+            newMember.MemberCardID = dateSearch + memberMonthCounter.padStart(6, '0') + '-' + hash.toString();
 
             //Create new member
             let retMember = await Member.create(newMember);
@@ -110,6 +139,7 @@ const updateMember = async (req, res) =>{
     try{
         let updatedMember = {
             firstName: req.body.firstName,
+            MemberCardID: req.body.MemberCardID,
             lastName: req.body.lastName,
             phoneNo: req.body.phoneNo,
             address: req.body.address,
@@ -119,7 +149,7 @@ const updateMember = async (req, res) =>{
 
         updatedMember.password = await bcrypt.hash(req.body.password, saltRounds);
                 
-        const updatedMem = await Member.update(updatedMember, {where: {email: updatedMember.email}, returning: true});
+        const updatedMem = await Member.update(updatedMember, {where: {MemberCardID: updatedMember.MemberCardID}, returning: true});
 
         if (updatedMem[1] !== 0){
             res.status(201).json("Updated member details");

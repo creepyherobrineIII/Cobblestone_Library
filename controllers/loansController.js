@@ -48,7 +48,7 @@ const getLoansForMem = async (req, res) =>{
     try{
         let memId = req.params.MemberId;
 
-        if (memId > 0){
+        if (memId !== null){
             let dbLoans = await Loans.findAll({where: {MemberId: memId}, include: [Member]});
 
             if (dbLoans.length !== 0){
@@ -68,10 +68,10 @@ const getLoansForMem = async (req, res) =>{
 //Get all loan history for one book
 const getLoansForBook = async (req, res) =>{
     try{
-        let bookId = req.params.BookId;
+        let loanBookISBN = req.params.BookISBN;
 
-        if (bookId > 0){
-            let dbLoans = await Loans.findAll({where: {BookId: bookId}, include: [Books]});
+        if (loanBookISBN.length === 13 && loanBookISBN !== null){
+            let dbLoans = await Loans.findAll({where: {BookISBN: loanBookISBN}, include: [Books]});
 
             if (dbLoans.length !== 0){
                 res.status(200).json(dbLoans);
@@ -87,7 +87,7 @@ const getLoansForBook = async (req, res) =>{
     }
 }
 
-//Create new loan
+//Create new loan (Needs to check: If loan )
 const createLoan = async (req, res) =>{
     try{
         let newLoan = {
@@ -97,11 +97,13 @@ const createLoan = async (req, res) =>{
             loanReturnDate: req.body.ReturnDate,
             loanFee: req.body.loanFee,
             MemberId: req.body.MemberId,
-            BookId: req.body.BookId
+            BookISBN: req.body.BookISBN
         };
 
+        //Create today's date && compare to return date in where of findAll (1st Option)
+
         if (newLoan !== null || newLoan !== undefined){
-            let loanCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, BookId: newLoan.BookId}});
+            let loanCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, BookISBN: newLoan.BookISBN}});
 
             if (loanCheck.length === 0){
                 let returnedLoan = await Loans.create(newLoan);

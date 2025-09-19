@@ -1,6 +1,6 @@
 module.exports = (Sequelize, DataTypes) => {
 
-    const Reserve = Sequelize.define('Reserve', {
+    const Reservations = Sequelize.define('Reservation', {
         
         id:{
             type: DataTypes.INTEGER,
@@ -14,5 +14,5 @@ module.exports = (Sequelize, DataTypes) => {
         }
     });
 
-    return Reserve
+    return Reservations
 }

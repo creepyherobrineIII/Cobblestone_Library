@@ -39,13 +39,15 @@ const getInventoryById = async (req, res) => {
     }
 };
 
-//Get Inventory by BookId
-const getInventoryByBookId = async (req, res) => {
+//Get Inventory by BookISBN
+const getInventoryByISBN = async (req, res) => {
     try{
-        let reqBookId = req.params.BookId;
+        let reqBookISBN = req.params.BookISBN;
 
-        if(reqBookId > 0){
-            let bookInven = await BookInventory.findAll({where: {BookId: reqBookId}});
+        console.log(reqBookISBN);
+
+        if(reqBookISBN.length === 13 && reqBookISBN !== null){
+            let bookInven = await BookInventory.findAll({where: {BookISBN: reqBookISBN}});
 
             if (bookInven.length !== 0){
                 res.status(200).json(bookInven);
@@ -68,10 +70,10 @@ const addBookToInventory = async (req, res) =>{
         let newBook = {
             totalCopies: req.body.totalCopies,
             availableCopies: req.body.availableCopies,
-            BookId: req.body.BookId
+            BookISBN: req.body.BookISBN
         }
 
-        let bookInvenCheck = await BookInventory.findAll({where: {BookId: newBook.BookId}});
+        let bookInvenCheck = await BookInventory.findAll({where: {BookISBN: newBook.BookISBN}});
 
         if (bookInvenCheck.length === 0){
             
@@ -96,12 +98,12 @@ const addBookToInventory = async (req, res) =>{
 const updateInventory = async (req, res) =>{
     try{
         let reqUpdatedInven = {
-            id: req.body.id,
+            BookISBN: req.body.BookISBN,
             totalCopies: req.body.totalCopies,
             availableCopies: req.body.availableCopies
         };
 
-        let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {id: reqUpdatedInven.id}, returning: true});
+        let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {BookISBN: reqUpdatedInven.BookISBN}, returning: true});
 
         if (updatedInvRec[1] !== 0){
             res.status(201).json('Updated book inventory');
@@ -118,7 +120,7 @@ const updateInventory = async (req, res) =>{
 module.exports = {
     getInventory,
     getInventoryById,
-    getInventoryByBookId,
+    getInventoryByISBN,
     addBookToInventory,
     updateInventory
 };
