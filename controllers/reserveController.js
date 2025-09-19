@@ -1,5 +1,6 @@
 const db = require('../models/modelIndex.js');
 const Reservations = db.reservations;
+const BookInventory = db.bookInventory;
 
 //Get all reservations
 const getAllReservations = async (req, res) =>{
@@ -43,14 +44,14 @@ const getReservationById = async (req, res) =>{
 
 }
 
-//Get reservations by BookId (TEST)
+//Get reservations by BookISBN
 const getReservationByBook = async (req, res) =>{
     try{
-        let bookId = req.params.BookId;
+        let bookISBN = req.params.BookISBN;
 
-        if (bookId > 0)
+        if (bookISBN.length === 13)
         {
-            let reserveRec = await Reservations.findAll({where: {BookId: bookId}});
+            let reserveRec = await Reservations.findAll({where: {BookISBN: bookISBN}});
 
             if (reserveRec.length !== 0){
                 res.status(200).json(reserveRec);
@@ -58,7 +59,7 @@ const getReservationByBook = async (req, res) =>{
                 res.status(400).json('Reservation does not exist');
             }
         }else{
-            res.status(400).json('Incorrect ID Value');
+            res.status(400).json('Incorrect ISBN Value');
         }
     }catch(error){
         console.log('\nError Message:\n', error);
@@ -66,12 +67,12 @@ const getReservationByBook = async (req, res) =>{
     }
 }
 
-//Get reservations by MemberId (TEST)
+//Get reservations by MemberId
 const getReservationByMemId = async (req, res) =>{
     try{
         let memId = req.params.MemberId;
 
-        if(reserveID > 0)
+        if(memId !== undefined)
         {
             let reserveRec = await Reservations.findAll({where: {MemberId: memId}});
 
@@ -97,25 +98,40 @@ const createReservation = async (req, res) =>{
      let newReservation = {
         resDateExpiry: req.body.resDateExpiry,
         MemberId: req.body.MemberId,
-        BookId: req.body.BookId
+        BookISBN: req.body.BookISBN
     };
 
-    if (newReservation !== null || newReservation !== undefined){
+    if (newReservation !== undefined){
 
-        let reserveCheck = await Reservations.findOne({where: {MemberId: newReservation.MemberId, BookId: newReservation.BookId}});
+        let reserveCheck = await Reservations.findOne({where: {MemberId: newReservation.MemberId, BookISBN: newReservation.BookISBN}});
 
-        if (reserveCheck === null){
-            let createdRes = await Reservations.create(newReservation);
+        let bookInven = await BookInventory.findOne({where: {BookISBN: newReservation.BookISBN}});
 
-            if (createdRes !== null || createdRes !== undefined){
-                res.status(201).json(createdRes);
+        if(bookInven !== null){
+            if(bookInven.availableCopies > 0){
+                if (reserveCheck === null){
+                    let createdRes = await Reservations.create(newReservation);
+
+                    if (createdRes !== null){
+                        //Only deduct from available copies if the CREATE was succesful
+                        bookInven.availableCopies -= 1;
+                        await bookInven.save();
+
+                        res.status(201).json(createdRes);
+                    }else{
+                        res.status(400).json('Could not create new reservation');
+                    }
+                }else{
+                    res.status(400).json('A reservation for this book under this member has already been made');
+                }
             }else{
-                res.status(400).json('Could not create new reservation');
+                res.status(400).json('No available copies are present in the library');
             }
         }else{
-            res.status(400).json('A reservation for this book under this member has already been made');
+            res.status(400).json('Could not find book inventory to make reservation');
         }
-
+    }else{
+        res.status(400).json('Error in getting request body');   
     }
    }catch(error){
         console.log('\nError Message:\n', error);
@@ -130,14 +146,34 @@ const deleteReservation = async (req, res) =>{
         let resId = req.params.id;
 
         if (resId > 0){
-            let delResRecCount = await Reservations.destroy({where: {id: resId}});
+            let destroyedRes = await Reservations.findOne({where: {id: resId}});
 
-            if (delResRecCount > 0){
-                res.status(200).json(delResRecCount > 0);
-            }else{
-                res.status(400).json('Reservation does not exist');
-            }
-        }   
+           if(destroyedRes !== null){
+                //Acquire book inventory to update
+
+                let bookInven = await BookInventory.findOne({where: {BookISBN: destroyedRes.BookISBN}});
+
+                if (bookInven !== null){
+                    let delResRecCount = await Reservations.destroy({where: {id: resId}});
+
+                    if (delResRecCount > 0){
+                        bookInven.availableCopies += 1;
+
+                        await bookInven.save();
+
+                        res.status(200).json('Number of reservations deleted:' + delResRecCount.toString());
+                    }else{
+                        res.status(400).json('Reservation does not exist');
+                    }
+                }else{
+                    res.status(400).json('Could not find inventory to update');
+                }
+           }else{
+                res.status(400).json('Could not find reservation');
+           }
+        }else{
+            res.status(400).json('Invalid Reservation ID value');
+        }
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);

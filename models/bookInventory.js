@@ -14,8 +14,18 @@ module.exports = (Sequelize, DataTypes) =>{
 
         availableCopies:{
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            validate:{
+                isLessOrEqualToTotalCopies(value){
+                    if(value > this.totalCopies){
+                        throw new Error('Available copies must be less than or equal to total copies')
+                    }
+                }
+            }
         }
+    },{
+        paranaoid: true,
+        deletedAt: 'BookRemovalDate'
     });
 
     return BookInventory;

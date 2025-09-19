@@ -46,40 +46,55 @@ db.reservations = require('./reservations.js')(sequelize, DataTypes);
 
 //Books:BookInventory
 db.books.hasOne(db.bookInventory, {
-    onDelete: 'CASCADE',
     sourceKey: 'ISBN',
     foreignKey: 'BookISBN'
+});
+
+db.books.afterDestroy(async (book, options) =>{
+    await db.BookInventory.destroy({where: {BookISBN: book.ISBN}, paranoid: true})
 });
 
 
 //Member:Loans
 db.member.hasMany(db.loans,{
-    onDelete: 'CASCADE',
     sourceKey: 'MemberCardID',
     foreignKey: 'MemberId'
 });
 
+db.member.afterDestroy(async (mem, options) =>{
+    await db.loans.destroy({where: {MemberId: mem.MemberCardID}, paranoid: true})
+});
 
-//Member:r\Reservations
+
+//Member:Reservations
 db.member.hasMany(db.reservations,{
-    onDelete: 'CASCADE',
     sourceKey: 'MemberCardID',
     foreignKey: 'MemberId'
+});
+
+db.member.afterDestroy(async (mem, options) =>{
+    await db.reservations.destroy({where: {MemberId: mem.MemberCardID}, paranoid: true})
 });
 
 //Book: Loans
 db.books.hasMany(db.loans,{
-    onDelete: 'CASCADE',
     sourceKey: 'ISBN',
     foreignKey: 'BookISBN'
 });
 
+db.books.afterDestroy(async (book, options) =>{
+    await db.loans.destroy({where: {BookISBN: book.ISBN}, paranoid: true})
+});
 
 //Book: Reservations
 db.books.hasMany(db.reservations,{
     onDelete: 'CASCADE',
     sourceKey: 'ISBN',
     foreignKey: 'BookISBN'
+});
+
+db.books.afterDestroy(async (book, options) =>{
+    await db.reservations.destroy({where: {BookISBN: book.ISBN}, paranoid: true})
 });
 
 

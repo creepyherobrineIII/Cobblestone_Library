@@ -3,7 +3,7 @@ const db = require('../models/modelIndex.js');
 const Loans = db.loans;
 const Member = db.member;
 const Books = db.books;
-
+const Reservations = db.reservations;
 
 //Get all loans
 const getAllLoans = async (req, res) =>{
@@ -94,18 +94,19 @@ const createLoan = async (req, res) =>{
             loanStatus: req.body.loanStatus,
             loanStartDate: req.body.loanStartDate,
             loanDueDate: req.body.loanDueDate,
-            loanReturnDate: req.body.ReturnDate,
             loanFee: req.body.loanFee,
             MemberId: req.body.MemberId,
             BookISBN: req.body.BookISBN
         };
 
-        //Create today's date && compare to return date in where of findAll (1st Option)
 
-        if (newLoan !== null || newLoan !== undefined){
-            let loanCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, BookISBN: newLoan.BookISBN}});
+        if (newLoan !== undefined){
 
-            if (loanCheck.length === 0){
+            //Check if reservation exists, then delete it
+            let resCheck = await Reservations.findOne({where: {BookISBN: newLoan.BookISBN, MemberId: newLoan.MemberId}});
+
+
+            if (resCheck !== null){
                 let returnedLoan = await Loans.create(newLoan);
 
                 res.status(201).json('Created loan:\n' + returnedLoan); 
@@ -113,7 +114,7 @@ const createLoan = async (req, res) =>{
                res.status(400).json('Loan already exists'); 
             }
         }else{
-            res.status(400).json('Incomplete loan data');
+            res.status(400).json('Error in getting request body');
         }
 
     }catch(error){

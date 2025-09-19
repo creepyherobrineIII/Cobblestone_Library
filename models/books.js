@@ -68,6 +68,9 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         }
+    },{
+        paranaoid: true,
+        deletedAt: 'BookRemovalDate'
     });
 
     return Books

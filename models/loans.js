@@ -24,7 +24,7 @@ module.exports = (Sequelize, DataTypes) =>{
 
         loanReturnDate:{
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
 
         loanFee:{
@@ -32,6 +32,9 @@ module.exports = (Sequelize, DataTypes) =>{
             allowNull: false,
             defaultValue: 0.00
         }
+    },{
+        paranaoid: true,
+        deletedAt: 'LoanDeletionDate'
     });
 
     return Loans;

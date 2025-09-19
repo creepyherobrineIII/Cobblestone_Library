@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) =>{
         type: DataTypes.STRING,
         allowNull: false
        }
+    },{
+        paranaoid: true,
+        deletedAt: 'LibAccDelDate'
     })
 
     return Librarian;

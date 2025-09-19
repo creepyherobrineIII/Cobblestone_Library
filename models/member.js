@@ -48,6 +48,9 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: true
        }
+    },{
+        paranaoid: true,
+        deletedAt: 'MemAccRemovalDate'
     })
 
     return Member;

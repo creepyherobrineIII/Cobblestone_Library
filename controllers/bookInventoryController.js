@@ -1,7 +1,7 @@
 const db = require('../models/modelIndex.js');
 const BookInventory = db.bookInventory;
 
-//Get Inventory
+//Get Inventory (active inventory)
 const getInventory = async (req, res) => {
     try{
         let bookInven = await BookInventory.findAll();
@@ -16,6 +16,8 @@ const getInventory = async (req, res) => {
         res.status(400).json(error.message);
     }
 };
+
+//Get Inventory (past and present)
 
 //Get inventory by Id
 const getInventoryById = async (req, res) => {
@@ -64,7 +66,7 @@ const getInventoryByISBN = async (req, res) => {
     }
 };
 
-//Add book copies to inventory
+//Add book copies to inventory 
 const addBookToInventory = async (req, res) =>{
     try{
         let newBook = {
