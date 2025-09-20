@@ -69,7 +69,7 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false
         }
     },{
-        paranaoid: true,
+        paranoid: true,
         deletedAt: 'BookRemovalDate'
     });
 

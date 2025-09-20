@@ -1,3 +1,4 @@
+const loans = require('../models/loans.js');
 const db = require('../models/modelIndex.js');
 
 const Loans = db.loans;
@@ -91,7 +92,6 @@ const getLoansForBook = async (req, res) =>{
 const createLoan = async (req, res) =>{
     try{
         let newLoan = {
-            loanStatus: req.body.loanStatus,
             loanStartDate: req.body.loanStartDate,
             loanDueDate: req.body.loanDueDate,
             loanFee: req.body.loanFee,
@@ -106,13 +106,44 @@ const createLoan = async (req, res) =>{
             let resCheck = await Reservations.findOne({where: {BookISBN: newLoan.BookISBN, MemberId: newLoan.MemberId}});
 
 
-            if (resCheck !== null){
-                let returnedLoan = await Loans.create(newLoan);
+            //Check if member has overdue loans
+            let overDueLoansCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, 
+                        loanStatus: { 
+                            [Op.in]: ['Returned: Overdue - Not paid', 'Loaned: Overdue']
+                        }}});
 
-                res.status(201).json('Created loan:\n' + returnedLoan); 
+            //Check if has existing loan on specific book
+            let loanCheck = await Loans.findOne({where: {
+                BookISBN: newLoan.BookISBN, 
+                MemberId: newLoan.MemberId,
+                loanStatus: { 
+                    [Op.in]: ['Loaned', 'Returned: Overdue - Not paid', 'Loaned: Overdue']
+                }}})
+
+
+            //Check if loan already exists
+
+            if (overDueLoansCheck.length === 0){
+                if (resCheck === null && loanCheck !== null ){
+                    res.status(401).json('Member is already loaning the book'); 
+                }
+
+                if (resCheck === null && loanCheck === null){
+                    res.status(401).json('Book needs to be reserved first'); 
+                }
+
+                if (resCheck !== null && loanCheck === null){
+                    let returnedLoan = await Loans.create(newLoan);
+
+                    await Reservations.destroy({where: {BookISBN: newLoan.BookISBN, MemberId: newLoan.MemberId}})
+
+                    res.status(201).json(returnedLoan);
+                }
             }else{
-               res.status(400).json('Loan already exists'); 
+                res.status(401).json('Member has overdue loans: Cannot loan book'); 
             }
+            
+            
         }else{
             res.status(400).json('Error in getting request body');
         }
@@ -138,13 +169,38 @@ const deleteLoan = async (req, res) =>{
     try{
         let loanId = req.params.id;
 
-        if(loanId > 0){
-            let deletedLoanCount = await Loans.destroy({where: {id: loanId}});
 
-            if (deletedLoanCount > 0){
-                res.status(200).json(deletedLoanCount);
+        if(loanId > 0){
+
+            let loanRec = await Loans.findOne({where: {id: loanId}})
+
+            let outstandingLoan = false;
+
+            switch(loanRec.loanStatus){
+                case 'Loaned':  outstandingLoan = true;
+
+                case 'Loaned: Overdue': outstandingLoan = true;
+
+                case 'Returned: Overdue - Not paid': outstandingLoan = true;
+
+                case 'Returned: Not Overdue': outstandingLoan = false;
+                
+                case 'Returned: Overdue - Paid': outstandingLoan = false;
+
+                default: outstandingLoan = true; 
+            }
+
+            if (outstandingLoan){
+                res.status(401).json('Loan data cannot be deleted: Outstanding loan/fees')
             }else{
-                res.status(400).json('Loan data does not exist');  
+                
+                let deletedLoanCount = await Loans.destroy({where: {id: loanId}});
+
+                if (deletedLoanCount > 0){
+                    res.status(200).json(deletedLoanCount);
+                }else{
+                    res.status(400).json('Loan data does not exist');  
+                }
             }
         }else{
             res.status(400).json('Invalid loan id');     

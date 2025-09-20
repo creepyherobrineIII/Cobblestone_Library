@@ -25,6 +25,6 @@ router.post('/create-loan', loansController.createLoan);
 
 //DELETE Methods
 //Delete a loan
-router.delete('delete/:id', loansController.deleteLoan);
+router.delete('/delete/:id', loansController.deleteLoan);
 
 module.exports = router;

@@ -12,9 +12,6 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         }
-    },{
-        paranaoid: true,
-        deletedAt: 'lDate'
     });
 
     return Reservations

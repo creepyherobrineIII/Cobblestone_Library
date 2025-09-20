@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { Op } = require('sequelize')
 const saltRounds = 10;
 const Member = db.member;
+const Loans = db.loans;
 
 //Get all memebers
 const getAllMembers = async (req, res) =>{
@@ -165,15 +166,28 @@ const updateMember = async (req, res) =>{
 
 const delMember = async (req, res) =>{
     try{
-        memToDelEmail = req.body.email;
+        let memToDelEmail = req.body.email;
 
-        let deletedMemCount = await Member.destroy({where: {email: memToDelEmail}});
+        let memberToDel = await Member.findOne({where: {email: memToDelEmail}})
 
-        if (deletedMemCount > 0){
-            res.status(200).json(`Members deleted: ${deletedMemCount}`);  
+        let loanCheck = await Loans.findAll({where: {MemberId: memberToDel.MemberCardID, 
+            loanStatus: { 
+                [Op.in]: ['Loaned', 'Returned: Overdue - Not paid', 'Loaned: Overdue']
+            }}});
+
+        if (loanCheck.length === 0){
+            let deletedMemCount = await Member.destroy({where: {email: memToDelEmail}, individualHooks: true});
+
+            if (deletedMemCount > 0){
+                res.status(200).json(`Members deleted: ${deletedMemCount}`);  
+            }else{
+                res.status(400).json('Member does not exist');  
+            }
         }else{
-            res.status(400).json('Member does not exist');  
+            res.status(401).json('Member has outstanding loans and/or fees');
         }
+
+        
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);    
@@ -181,7 +195,6 @@ const delMember = async (req, res) =>{
 }
 
 
-/**TO-DO: Delete member*/
 
 module.exports = {
     getAllMembers,

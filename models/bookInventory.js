@@ -24,7 +24,7 @@ module.exports = (Sequelize, DataTypes) =>{
             }
         }
     },{
-        paranaoid: true,
+        paranoid: true,
         deletedAt: 'BookRemovalDate'
     });
 

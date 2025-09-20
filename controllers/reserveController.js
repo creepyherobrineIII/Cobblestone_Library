@@ -1,6 +1,7 @@
 const db = require('../models/modelIndex.js');
 const Reservations = db.reservations;
 const BookInventory = db.bookInventory;
+const Loans = db.loans;
 
 //Get all reservations
 const getAllReservations = async (req, res) =>{
@@ -103,26 +104,46 @@ const createReservation = async (req, res) =>{
 
     if (newReservation !== undefined){
 
+        //Checks
+            //Check if reservations already exists
         let reserveCheck = await Reservations.findOne({where: {MemberId: newReservation.MemberId, BookISBN: newReservation.BookISBN}});
 
+            //Getting book inventory
         let bookInven = await BookInventory.findOne({where: {BookISBN: newReservation.BookISBN}});
 
-        if(bookInven !== null){
+            //Checking for loans already made by the member for the requested book
+        let loanCheck = await Loans.findOne({where: {MemberId: newReservation.MemberId, BookISBN: newReservation.BookISBN}})
+
+            //Checking for overdue loans 
+        let overDueLoansCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, 
+                        loanStatus: { 
+                            [Op.in]: ['Returned: Overdue - Not paid', 'Loaned: Overdue']
+                        }}});
+
+        if (overDueLoansCheck.length !== 0){
+            res.status(401).json('Member has overdue loans: Cannot reserve any books');
+        }
+
+        if (reserveCheck !== null){
+            res.status(401).json('A reservation for this book under this member has already been made');
+        }
+
+        if (loanCheck !== null){
+            res.status(401).json('Loan for this book under this member already exists. Cannot reserve again');
+        }
+
+        if(bookInven !== null && reserveCheck === null && loanCheck === null){
             if(bookInven.availableCopies > 0){
-                if (reserveCheck === null){
-                    let createdRes = await Reservations.create(newReservation);
+                let createdRes = await Reservations.create(newReservation);
 
-                    if (createdRes !== null){
-                        //Only deduct from available copies if the CREATE was succesful
-                        bookInven.availableCopies -= 1;
-                        await bookInven.save();
+                if (createdRes !== null){
+                    //Only deduct from available copies if the CREATE was succesful
+                    bookInven.availableCopies -= 1;
+                    await bookInven.save();
 
-                        res.status(201).json(createdRes);
-                    }else{
-                        res.status(400).json('Could not create new reservation');
-                    }
+                    res.status(201).json(createdRes);
                 }else{
-                    res.status(400).json('A reservation for this book under this member has already been made');
+                    res.status(400).json('Could not create new reservation');
                 }
             }else{
                 res.status(400).json('No available copies are present in the library');
@@ -154,13 +175,9 @@ const deleteReservation = async (req, res) =>{
                 let bookInven = await BookInventory.findOne({where: {BookISBN: destroyedRes.BookISBN}});
 
                 if (bookInven !== null){
-                    let delResRecCount = await Reservations.destroy({where: {id: resId}});
+                    let delResRecCount = await Reservations.destroy({where: {id: resId}, individualHooks: true});
 
                     if (delResRecCount > 0){
-                        bookInven.availableCopies += 1;
-
-                        await bookInven.save();
-
                         res.status(200).json('Number of reservations deleted:' + delResRecCount.toString());
                     }else{
                         res.status(400).json('Reservation does not exist');

@@ -49,7 +49,7 @@ module.exports = (Sequelize, DataTypes) => {
             defaultValue: true
        }
     },{
-        paranaoid: true,
+        paranoid: true,
         deletedAt: 'MemAccRemovalDate'
     })
 

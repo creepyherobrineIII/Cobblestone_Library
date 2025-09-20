@@ -3,13 +3,14 @@ module.exports = (Sequelize, DataTypes) =>{
     const Loans = Sequelize.define('Loans', {
         id:{
             type: DataTypes.INTEGER,
-            allowNull: false,
+            autoIncrement: true,
             primaryKey: true
         },
 
         loanStatus:{
-            type:DataTypes.ENUM('Loaned', 'Returned', 'Overdue - Not paid', 'Overdue - Paid'),
-            allowNull: false, 
+            type:DataTypes.ENUM('Loaned','Loaned: Overdue', 'Returned: Not Overdue', 'Returned: Overdue - Not paid', 'Returned: Overdue - Paid'),
+            allowNull: false,
+            defaultValue: 'Loaned' 
         },
 
         loanStartDate:{
@@ -33,7 +34,7 @@ module.exports = (Sequelize, DataTypes) =>{
             defaultValue: 0.00
         }
     },{
-        paranaoid: true,
+        paranoid: true,
         deletedAt: 'LoanDeletionDate'
     });
 

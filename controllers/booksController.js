@@ -102,7 +102,7 @@ const addBook = async (req, res) =>{
                 let bookEntry = await Books.create(newBook, {include: [BookInventory]});
 
                 if (bookEntry !== null || book !== undefined){
-                    res.status(201).json('Created new book:\n'+ JSON.stringify(bookEntry));
+                    res.status(201).json(bookEntry);
                 }else{
                     res.status(400).json('Could not create new book');
                 }
@@ -156,7 +156,7 @@ const deleteBook = async (req, res) =>{
    try{
         let bookToDel = req.params.id
 
-        let deletedBookCount = await Books.destroy({where: {id: bookToDel}});
+        let deletedBookCount = await Books.destroy({where: {id: bookToDel}, individualHooks: true});
 
         if (deletedBookCount > 0){
             res.status(200).json(deletedBookCount);

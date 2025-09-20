@@ -50,8 +50,8 @@ db.books.hasOne(db.bookInventory, {
     foreignKey: 'BookISBN'
 });
 
-db.books.afterDestroy(async (book, options) =>{
-    await db.BookInventory.destroy({where: {BookISBN: book.ISBN}, paranoid: true})
+db.books.addHook('afterDestroy', async (book, options) =>{
+    await db.bookInventory.destroy({where: {BookISBN: book.ISBN}});
 });
 
 
@@ -61,7 +61,7 @@ db.member.hasMany(db.loans,{
     foreignKey: 'MemberId'
 });
 
-db.member.afterDestroy(async (mem, options) =>{
+db.member.addHook('afterDestroy', async (mem, options) =>{
     await db.loans.destroy({where: {MemberId: mem.MemberCardID}, paranoid: true})
 });
 
@@ -72,8 +72,8 @@ db.member.hasMany(db.reservations,{
     foreignKey: 'MemberId'
 });
 
-db.member.afterDestroy(async (mem, options) =>{
-    await db.reservations.destroy({where: {MemberId: mem.MemberCardID}, paranoid: true})
+db.member.addHook('afterDestroy', async (mem, options) =>{
+    await db.reservations.destroy({where: {MemberId: mem.MemberCardID}})
 });
 
 //Book: Loans
@@ -82,20 +82,36 @@ db.books.hasMany(db.loans,{
     foreignKey: 'BookISBN'
 });
 
-db.books.afterDestroy(async (book, options) =>{
-    await db.loans.destroy({where: {BookISBN: book.ISBN}, paranoid: true})
+db.books.addHook('afterDestroy', async (book, options) =>{
+    await db.loans.destroy({where: {BookISBN: book.ISBN}, paranoid: true});
 });
 
 //Book: Reservations
 db.books.hasMany(db.reservations,{
-    onDelete: 'CASCADE',
     sourceKey: 'ISBN',
     foreignKey: 'BookISBN'
 });
 
-db.books.afterDestroy(async (book, options) =>{
-    await db.reservations.destroy({where: {BookISBN: book.ISBN}, paranoid: true})
+db.books.addHook('afterDestroy', async (book, options) =>{
+    await db.reservations.destroy({where: {BookISBN: book.ISBN}})
 });
+
+//Hooks
+//Reservation (add book back to inventory after a reservation has been deleted)
+db.reservations.addHook('afterDestroy', async(reservation, options) =>{
+
+    let bookInven = await db.bookInventory.findOne({where: {BookISBN: reservation.BookISBN}});
+
+    //Check if book is being loaned, or reservation is deleting for other reason
+    let loanCheck = await db.loans.findOne({where: {BookISBN: reservation.BookISBN, MemberId: reservation.MemberId}});
+
+    if (loanCheck === null){
+
+        bookInven.availableCopies += 1;
+
+        await bookInven.save();
+    }
+})
 
 
 db.Sequelize.sync({force : false})
