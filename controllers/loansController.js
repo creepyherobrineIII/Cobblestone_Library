@@ -117,7 +117,7 @@ const createLoan = async (req, res) =>{
                 BookISBN: newLoan.BookISBN, 
                 MemberId: newLoan.MemberId,
                 loanStatus: { 
-                    [Op.in]: ['Loaned', 'Returned: Overdue - Not paid', 'Loaned: Overdue']
+                    [Op.in]: ['Loaned', 'Loaned: Overdue']
                 }}})
 
 

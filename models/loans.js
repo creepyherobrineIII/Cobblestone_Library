@@ -8,7 +8,7 @@ module.exports = (Sequelize, DataTypes) =>{
         },
 
         loanStatus:{
-            type:DataTypes.ENUM('Loaned','Loaned: Overdue', 'Returned: Not Overdue', 'Returned: Overdue - Not paid', 'Returned: Overdue - Paid'),
+            type:DataTypes.ENUM('Loaned','Loaned: Overdue','Returned: Not Overdue', 'Returned: Overdue - Not paid', 'Returned: Overdue - Paid'),
             allowNull: false,
             defaultValue: 'Loaned' 
         },

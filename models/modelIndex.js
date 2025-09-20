@@ -103,7 +103,11 @@ db.reservations.addHook('afterDestroy', async(reservation, options) =>{
     let bookInven = await db.bookInventory.findOne({where: {BookISBN: reservation.BookISBN}});
 
     //Check if book is being loaned, or reservation is deleting for other reason
-    let loanCheck = await db.loans.findOne({where: {BookISBN: reservation.BookISBN, MemberId: reservation.MemberId}});
+    let loanCheck = await db.loans.findOne({where: {
+        BookISBN: reservation.BookISBN, 
+        MemberId: reservation.MemberId,
+        loanStatus: 'Loaned'
+    }});
 
     if (loanCheck === null){
 

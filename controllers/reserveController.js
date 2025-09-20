@@ -132,7 +132,7 @@ const createReservation = async (req, res) =>{
             res.status(401).json('Loan for this book under this member already exists. Cannot reserve again');
         }
 
-        if(bookInven !== null && reserveCheck === null && loanCheck === null){
+        if(bookInven !== null && reserveCheck === null && loanCheck === null && overDueLoansCheck === null){
             if(bookInven.availableCopies > 0){
                 let createdRes = await Reservations.create(newReservation);
 
@@ -149,7 +149,7 @@ const createReservation = async (req, res) =>{
                 res.status(400).json('No available copies are present in the library');
             }
         }else{
-            res.status(400).json('Could not find book inventory to make reservation');
+            res.status(400).json('Check: Member loans and/or book inventory');
         }
     }else{
         res.status(400).json('Error in getting request body');   
