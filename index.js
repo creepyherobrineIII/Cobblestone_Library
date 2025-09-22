@@ -1,4 +1,5 @@
 const express = require('express');
+const backgroundFuncs = require('./controllers/services.js');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -34,3 +35,13 @@ app.get('/', (req, res)=>{
 app.listen(PORT, ()=>{
     console.log(`Server is running at http://localhost:${PORT}`)
 });
+
+//Background Functions
+//Updating loan status
+setInterval(backgroundFuncs.updateLoanStatus(), 210000);
+
+//Calculating loan fees
+setInterval(backgroundFuncs.calculateFees(), 300000);
+
+//Clearing expired reservations
+setInterval(backgroundFuncs.checkResExpiration(), 120000);
