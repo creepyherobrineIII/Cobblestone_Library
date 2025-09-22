@@ -1,5 +1,5 @@
-const loans = require('../models/loans.js');
 const db = require('../models/modelIndex.js');
+const { Op } = require('sequelize');
 
 const Loans = db.loans;
 const Member = db.member;
@@ -93,7 +93,6 @@ const createLoan = async (req, res) =>{
     try{
         let newLoan = {
             loanStartDate: req.body.loanStartDate,
-            loanDueDate: req.body.loanDueDate,
             loanFee: req.body.loanFee,
             MemberId: req.body.MemberId,
             BookISBN: req.body.BookISBN
@@ -133,6 +132,17 @@ const createLoan = async (req, res) =>{
                 }
 
                 if (resCheck !== null && loanCheck === null){
+
+                    //Creating due date for book loan (in two weeks time)
+                    let startDate = new Date(newLoan.loanStartDate);
+
+                    let returnDate = new Date(startDate);
+
+                    returnDate.setDate(startDate.getDate() + 14);
+
+                    newLoan.loanReturnDate = returnDate;
+
+                    //Creating new loan entry
                     let returnedLoan = await Loans.create(newLoan);
 
                     await Reservations.destroy({where: {BookISBN: newLoan.BookISBN, MemberId: newLoan.MemberId}})
@@ -157,7 +167,24 @@ const createLoan = async (req, res) =>{
 //Update loan
 const updateLoan = async (req, res) =>{
     try{
-        
+        let updatedLoan = {
+            id: req.body.id,
+            loanStatus: req.body.loanStatus,
+            loanFee: req.body.loanFee,
+            loanReturnDate: req.body.loanReturnDate
+        }
+
+        if (updatedLoan !== null){
+            let loanUp = await Loans.update(updatedLoan, {where: {id: updatedLoan.id}, returning: true});
+
+            if(loanUp[1] !== 0){
+                res.status(201).json('Updated loan');
+            }else{
+                res.status(400).json('Could not update loan details'); 
+            }
+        }else{
+            res.status(400).json('Error in getting request body'); 
+        }
     }catch(error){
         console.log('\nError Message:\n', error);
         res.status(400).json(error.message);   
@@ -217,5 +244,6 @@ module.exports ={
     getLoansForMem,
     getLoansForBook,
     createLoan,
+    updateLoan,
     deleteLoan
 }

@@ -32,6 +32,11 @@ module.exports = (Sequelize, DataTypes) =>{
             type: DataTypes.FLOAT(10,2),
             allowNull: false,
             defaultValue: 0.00
+        }, 
+
+        lastFeeDateUpdate:{
+            type: DataTypes.DATE,
+            allowNull: true
         }
     },{
         paranoid: true,

@@ -1,4 +1,6 @@
 const db = require('../models/modelIndex.js');
+const { Op } = require('sequelize');
+
 const Reservations = db.reservations;
 const BookInventory = db.bookInventory;
 const Loans = db.loans;
@@ -97,7 +99,6 @@ const getReservationByMemId = async (req, res) =>{
 const createReservation = async (req, res) =>{
    try{
      let newReservation = {
-        resDateExpiry: req.body.resDateExpiry,
         MemberId: req.body.MemberId,
         BookISBN: req.body.BookISBN
     };
@@ -134,6 +135,16 @@ const createReservation = async (req, res) =>{
 
         if(bookInven !== null && reserveCheck === null && loanCheck === null && overDueLoansCheck === null){
             if(bookInven.availableCopies > 0){
+                //Adding two days to current date for reservation expiry date
+                let currentDate = new Date();
+
+                let expiryDate = new Date(currentDate);
+
+                expiryDate.setDate(expiryDate.getDate() + 2);
+
+                newReservation.resDateExpiry = expiryDate;
+
+                //Create reservation
                 let createdRes = await Reservations.create(newReservation);
 
                 if (createdRes !== null){

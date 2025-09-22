@@ -22,6 +22,7 @@ router.post('/create-loan', loansController.createLoan);
 
 //PUT Methods
 //Update a loan
+router.put('/update', loansController.updateLoan);
 
 //DELETE Methods
 //Delete a loan

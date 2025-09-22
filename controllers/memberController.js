@@ -1,6 +1,6 @@
 const db = require('../models/modelIndex.js');
 const bcrypt = require('bcrypt');
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
 const saltRounds = 10;
 const Member = db.member;
 const Loans = db.loans;
