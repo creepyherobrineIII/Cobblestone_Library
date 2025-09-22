@@ -10,10 +10,17 @@ const Reservations = db.reservations;
 const updateLoanStatus = async ()=>{
     let loans = await Loans.findAll({where: {loanStatus: 'Loaned'}});
 
+    let d1 = new Date(); //Current date 
+    let d2 = null; //loan Due Date
+
     if (loans.length !== 0){
         for(let i = 0; i < loans.length; i++){
-            let currentDate = new Date();
-            let dueDate = new Date(loans[i].loanDueDate)
+            d2 = new Date(loans[i].loanDueDate);
+
+            let currentDate = new Date(d1.getFullYear(), d1.getMonth(), d1.getDay());
+
+
+            let dueDate = new Date(d2.getFullYear(), d2.getMonth(), d2.getDay());
 
             let loanDateCompare = currentDate <= dueDate;
 
@@ -28,10 +35,24 @@ const updateLoanStatus = async ()=>{
 
 //Calculate overdue fees
 const calculateFees = async () =>{
-    //lfdu: last fee date update
-    let lFDU = null;
-    let currentDate = new Date();
 
+    let d1 = new Date(); //Current date 
+    let d2 = null; //Last fee update
+    let d3 = null; //Loan Due Date
+
+    //Date variables 
+    let currentD = new Date(d1.getFullYear(), d1.getMonth(), d1.getDay());
+    let dueD = null;
+    let LFDU =  null;
+
+    //Loan variable
+    let loanFee = null;
+
+    //Boolean date comparisons
+    let bCDueDateAndCurrentDate = null;
+    let bCLFDUAndCurrentDate = null;
+
+    //Numerical date comparisons
     let overdueLoans = await Loans.findAll(
         {where: {
             loanStatus:{
@@ -39,8 +60,25 @@ const calculateFees = async () =>{
             }
         }});
 
+    //Assign loan fees
     if (overdueLoans.length !== 0){
+        for(let i = 0; i < overdueLoans.length(); i++){
 
+            //Date acquisition
+            d2 = new Date(overdueLoans[i].lastFeeDateUpdate);
+            d3 = new Date(overdueLoans[i].loanDueDate);
+
+            LFDU = new Date(d2.getFullYear(), d2.getMonth(), d2.getDay());
+            dueD = new Date(d3.getFullYear(), d3.getMonth(), d3.getDay());
+
+            //Check if last fee update date and current date align
+
+            //Check if due date and current date are bigger
+
+            //
+
+
+        }
     }
 }
 
