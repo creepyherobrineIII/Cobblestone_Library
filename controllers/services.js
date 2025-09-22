@@ -8,33 +8,51 @@ const Reservations = db.reservations;
 
 //Update loans status automatically
 const updateLoanStatus = async ()=>{
-    let loans = await Loans.findAll({where: {loanStatus: 'Loaned'}});
+    let loans = null;
+    let loanDateCompare = null;
+    let limit = 100;
+    let offset = 0;
 
     let d1 = new Date(); //Current date 
     let d2 = null; //loan Due Date
 
-    if (loans.length !== 0){
-        for(let i = 0; i < loans.length; i++){
-            d2 = new Date(loans[i].loanDueDate);
+    let currentDate = null;
+    let dueDate = null;
 
-            let currentDate = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    do{
+        loans = await Loans.findAll({where: {loanStatus: 'Loaned'}, limit, offset});
+        offset += limit;
+
+        if (loans.length !== 0)
+        try{
+            for(let i = 0; i < loans.length; i++){
+                d2 = new Date(loans[i].loanDueDate);
+
+                currentDate = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
 
 
-            let dueDate = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+                dueDate = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
 
-            let loanDateCompare = currentDate <= dueDate;
+                loanDateCompare = currentDate <= dueDate;
 
-            if (!loanDateCompare){
-                loans[i].loanStatus = 'Loaned: Overdue'
+                if (!loanDateCompare){
+                    loans[i].loanStatus = 'Loaned: Overdue'
 
-                await loans[i].save();
+                    await loans[i].save();
+                }
             }
+        }catch(error){
+            throw error;
         }
-    }
+    }while(loans.length === limit)
 }
 
 //Calculate overdue fees
 const calculateFees = async () =>{
+
+    let overdueLoans = null;
+    let limit = 100;
+    let offset = 0;
 
     let d1 = new Date(); //Current date 
     let d2 = null; //Last fee update
@@ -52,7 +70,12 @@ const calculateFees = async () =>{
     //Numerical date comparisons
     let nCDueDateAndCurrentDate = null;
 
-    let overdueLoans = await Loans.findAll(
+    do{
+
+
+    }while(overdueLoans.length === limit)
+
+    overdueLoans = await Loans.findAll(
         {where: {
             loanStatus:{
                 [Op.in]: ['Loaned: Overdue','Returned: Overdue - Not paid']
@@ -61,37 +84,39 @@ const calculateFees = async () =>{
 
     //Assign loan fees
     if (overdueLoans.length !== 0){
-        for(let i = 0; i < overdueLoans.length(); i++){
+        try{
+            for(let i = 0; i < overdueLoans.length(); i++){
 
-            //Date acquisition
-            d2 = new Date(overdueLoans[i].lastFeeDateUpdate);
-            d3 = new Date(overdueLoans[i].loanDueDate);
+                //Date acquisition
+                d2 = new Date(overdueLoans[i].lastFeeDateUpdate);
+                d3 = new Date(overdueLoans[i].loanDueDate);
 
-            LFDU = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
-            dueD = new Date(d3.getFullYear(), d3.getMonth(), d3.getDate());
+                LFDU = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+                dueD = new Date(d3.getFullYear(), d3.getMonth(), d3.getDate());
 
-            //Check date comaprisons
-            bCLFDUAndCurrentDate = LFDU <= currentD
-            bCDueDateAndCurrentDate = dueD < currentD
+                //Check date comaprisons
+                bCLFDUAndCurrentDate = LFDU <= currentD
+                bCDueDateAndCurrentDate = dueD < currentD
 
-            //Loan operation
-            if (bCLFDUAndCurrentDate){
-                if (bCDueDateAndCurrentDate){
-                    nCDueDateAndCurrentDate = ((currentD.getTime() - dueD.getTime()) / (24 * 60 * 60 *1000));
-                    
-                    if (nCDueDateAndCurrentDate === 1){
-                        overdueLoans[i].loanFee += 5;
+                //Loan operation
+                if (bCLFDUAndCurrentDate){
+                    if (bCDueDateAndCurrentDate){
+                        nCDueDateAndCurrentDate = ((currentD.getTime() - dueD.getTime()) / (24 * 60 * 60 *1000));
+                        
+                        if (nCDueDateAndCurrentDate === 1){
+                            overdueLoans[i].loanFee += 5;
 
-                    } else if(nCDueDateAndCurrentDate > 1){
-                        overdueLoans[i].loanFee += 1;
+                        } else if(nCDueDateAndCurrentDate > 1){
+                            overdueLoans[i].loanFee += 1;
+                        }
+
+                        await overdueLoans[i].save();
                     }
 
-                     await overdueLoans[i].save();
                 }
-
             }
-
-
+        }catch(error){
+            throw error
         }
     }
 }
