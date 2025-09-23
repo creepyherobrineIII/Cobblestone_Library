@@ -116,7 +116,7 @@ const createReservation = async (req, res) =>{
         let loanCheck = await Loans.findOne({where: {MemberId: newReservation.MemberId, BookISBN: newReservation.BookISBN}})
 
             //Checking for overdue loans 
-        let overDueLoansCheck = await Loans.findAll({where: {MemberId: newLoan.MemberId, 
+        let overDueLoansCheck = await Loans.findAll({where: {MemberId: newReservation.MemberId, 
                         loanStatus: { 
                             [Op.in]: ['Returned: Overdue - Not paid', 'Loaned: Overdue']
                         }}});
@@ -133,7 +133,7 @@ const createReservation = async (req, res) =>{
             res.status(401).json('Loan for this book under this member already exists. Cannot reserve again');
         }
 
-        if(bookInven !== null && reserveCheck === null && loanCheck === null && overDueLoansCheck === null){
+        if(bookInven !== null && reserveCheck === null && loanCheck === null && overDueLoansCheck.length === 0){
             if(bookInven.availableCopies > 0){
                 //Adding two days to current date for reservation expiry date
                 let currentDate = new Date();

@@ -60,7 +60,7 @@ const updateLoanStatus = async ()=>{
     dueDate = null;
     loans = null;
     loanDateCompare = null;
-    console.log('Updated loan statuses successfully at: ' + d1.toString() + '\n');
+    console.log('Updated loan statuses successfully at: \n' + d1.toString() + '\n');
     d1 = null;
     return;
 }
@@ -168,7 +168,7 @@ const calculateFees = async () =>{
     bCLFDUAndCurrentDate = null;
     nCDueDateAndCurrentDate = null;
     currentDay = null;
-    console.log('Updated fees successfully at: '+ d1.toString() + '\n');
+    console.log('Updated fees successfully at:\n '+ d1.toString() + '\n');
     d1 = null; 
     return;
     
@@ -206,7 +206,7 @@ const checkResExpiration = async () =>{
                     bCResExpDAndCurD = currentD > resExpD;
 
                     if (bCResExpDAndCurD){
-                       recDelCount += await reserves.destroy({where: {id: reserves[i].id}});
+                       recDelCount += await Reservations.destroy({where: {id: reserves[i].id}, individualHooks: true});
                     }else{
                         continue;
                     }
@@ -230,7 +230,7 @@ const checkResExpiration = async () =>{
     resExpD = null;
     reserves = null;
     bCResExpDAndCurD = null;
-    console.log('Amount of deleted records: ' + recDelCount.toString() + '\n at:' + d1.toString() + '\n');
+    console.log('Amount of deleted reservations: ' + recDelCount.toString() + '\n at:' + d1.toString() + '\n');
     d1 = null;
     recDelCount = null;
     return;
