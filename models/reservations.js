@@ -11,6 +11,11 @@ module.exports = (Sequelize, DataTypes) => {
         resDateExpiry:{
             type: DataTypes.DATEONLY,
             allowNull: false
+        },
+
+        resDateDeleted:{
+            type: DataTypes.DATEONLY,
+            allowNull: true
         }
     });
 

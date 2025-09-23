@@ -6,9 +6,9 @@ const BookInventory = db.bookInventory;
 const Loans = db.loans;
 
 //Get all reservations
-const getAllReservations = async (req, res) =>{
+const getAllReservations = async (req, res) =>{ //Active reservations
     try{
-        let reservations = await Reservations.findAll();
+        let reservations = await Reservations.findAll({where: {resDateDeleted: null}});
 
         if (reservations.length !== 0)
         {
@@ -54,7 +54,7 @@ const getReservationByBook = async (req, res) =>{
 
         if (bookISBN.length === 13)
         {
-            let reserveRec = await Reservations.findAll({where: {BookISBN: bookISBN}});
+            let reserveRec = await Reservations.findAll({where: {BookISBN: bookISBN, resDateDeleted: null}});
 
             if (reserveRec.length !== 0){
                 res.status(200).json(reserveRec);
@@ -77,7 +77,7 @@ const getReservationByMemId = async (req, res) =>{
 
         if(memId !== undefined)
         {
-            let reserveRec = await Reservations.findAll({where: {MemberId: memId}});
+            let reserveRec = await Reservations.findAll({where: {MemberId: memId, resDateDeleted: null}});
 
             if (reserveRec.length !== 0){
                 res.status(200).json(reserveRec);
@@ -107,7 +107,7 @@ const createReservation = async (req, res) =>{
 
         //Checks
             //Check if reservations already exists
-        let reserveCheck = await Reservations.findOne({where: {MemberId: newReservation.MemberId, BookISBN: newReservation.BookISBN}});
+        let reserveCheck = await Reservations.findOne({where: {MemberId: newReservation.MemberId, BookISBN: newReservation.BookISBN, resDateDeleted: null}});
 
             //Getting book inventory
         let bookInven = await BookInventory.findOne({where: {BookISBN: newReservation.BookISBN}});

@@ -213,7 +213,11 @@ const checkResExpiration = async () =>{
                     bCResExpDAndCurD = currentD > resExpD;
 
                     if (bCResExpDAndCurD){
-                       recDelCount += await Reservations.destroy({where: {id: reserves[i].id}, individualHooks: true});
+                       reserves[i].resDateDeleted = currentD;
+
+                       reserves[i].save();
+
+                       recDelCount++;
                     }else{
                         continue;
                     }
