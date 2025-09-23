@@ -94,6 +94,7 @@ const createLoan = async (req, res) =>{
         let newLoan = {
             loanStartDate: req.body.loanStartDate,
             loanFee: req.body.loanFee,
+            loanDueDate: req.body.loanDueDate,
             MemberId: req.body.MemberId,
             BookISBN: req.body.BookISBN
         };
@@ -134,13 +135,13 @@ const createLoan = async (req, res) =>{
                 if (resCheck !== null && loanCheck === null){
 
                     //Creating due date for book loan (in two weeks time)
-                    let startDate = new Date(newLoan.loanStartDate);
+                    /*let startDate = new Date(newLoan.loanStartDate);
 
-                    let returnDate = new Date(startDate);
+                    let dueDate = new Date(startDate);
 
                     returnDate.setDate(startDate.getDate() + 14);
 
-                    newLoan.loanReturnDate = returnDate;
+                    newLoan.loanDueDate = dueDate;*/
 
                     //Creating new loan entry
                     let returnedLoan = await Loans.create(newLoan);

@@ -38,10 +38,10 @@ app.listen(PORT, ()=>{
 
 //Background Functions
 //Updating loan status
-setInterval(backgroundFuncs.updateLoanStatus, 210000);
+setInterval(backgroundFuncs.updateLoanStatus, 60000);
 
 //Calculating loan fees
-setInterval(backgroundFuncs.calculateFees, 300000);
+setInterval(backgroundFuncs.calculateFees, 120000);
 
 //Clearing expired reservations
-setInterval(backgroundFuncs.checkResExpiration, 120000);
+setInterval(backgroundFuncs.checkResExpiration, 30000);

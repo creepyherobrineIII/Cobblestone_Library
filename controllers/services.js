@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const Loans = db.loans;
 const Reservations = db.reservations;
 
-//Update loans status automatically
+//Update loans status automatically (Tested)
 const updateLoanStatus = async ()=>{
     let loans = null;
     let loanDateCompare = null;
@@ -28,10 +28,10 @@ const updateLoanStatus = async ()=>{
 
                 console.log(d2.toString());
 
-                currentDate = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
-                dueDate = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+                currentDate = new Date(Date.UTC(d1.getUTCFullYear(), d1.getUTCMonth(), d1.getUTCDate()));
+                dueDate = new Date(Date.UTC(d2.getUTCFullYear(), d2.getUTCMonth(), d2.getUTCDate()));
 
-                loanDateCompare = currentDate <= dueDate;
+                loanDateCompare = currentDate.getTime() <= dueDate.getTime();
 
                 if (!loanDateCompare){
                     loans[i].loanStatus = 'Loaned: Overdue'
@@ -65,7 +65,7 @@ const updateLoanStatus = async ()=>{
     return;
 }
 
-//Calculate overdue fees
+//Calculate overdue fees (Tested)
 const calculateFees = async () =>{
 
     let overdueLoans = null;
@@ -77,7 +77,7 @@ const calculateFees = async () =>{
     let d3 = null; //Loan Due Date
 
     //Date variables 
-    let currentD = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    let currentD = new Date(Date.UTC(d1.getUTCFullYear(), d1.getUTCMonth(), d1.getUTCDate()));
     let currentDay = null;
     let dueD = null;
     let LFDU =  null;
@@ -100,46 +100,53 @@ const calculateFees = async () =>{
         offset += limit;
 
         if (overdueLoans.length !== 0){
-            try{
-                for(let i = 0; i < overdueLoans.length(); i++){
+            try{   
+                for(let i = 0; i < overdueLoans.length; i++){
 
                     //Date acquisition
                     if (overdueLoans[i].lastFeeDateUpdate === null){
                         d2 = new Date();
-                        currentDay = d2.getDate()
+                        currentDay = d2.getUTCDate()
 
                         d2.setDate(currentDay - 1);
                     }else{
                         d2 = new Date(overdueLoans[i].lastFeeDateUpdate);
                     }
+
+                    
                     d3 = new Date(overdueLoans[i].loanDueDate);
 
-                    LFDU = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
-                    dueD = new Date(d3.getFullYear(), d3.getMonth(), d3.getDate());
+                    LFDU = new Date(Date.UTC(d2.getUTCFullYear(), d2.getUTCMonth(), d2.getUTCDate()));
+                    dueD = new Date(Date.UTC(d3.getUTCFullYear(), d3.getUTCMonth(), d3.getUTCDate()));
+
+                    console.log('Current Date:' + currentD.toString())
+                    console.log('LFDU:' + LFDU.toString());
+                    console.log('Due Date:' + dueD.toString());
 
                     //Check date comaprisons
-                    bCLFDUAndCurrentDate = LFDU < currentD
-                    bCDueDateAndCurrentDate = dueD < currentD
+                    bCLFDUAndCurrentDate = LFDU.getTime() < currentD.getTime() 
+                    bCDueDateAndCurrentDate = dueD.getTime()  < currentD.getTime() 
 
                     //Assign loan fees
                     if (bCLFDUAndCurrentDate){
                         if (bCDueDateAndCurrentDate){
                             nCDueDateAndCurrentDate = ((currentD.getTime() - dueD.getTime()) / (24 * 60 * 60 *1000));
                             
-                            if (nCDueDateAndCurrentDate === 1){
+                            if (overdueLoans[i].loanFee === 0.00 || overdueLoans[i].loanFee === null){
+                                overdueLoans[i].loanFee = 0.00;
                                 overdueLoans[i].loanFee += 5;
 
-                            } else if(nCDueDateAndCurrentDate > 1){
+                                overdueLoans[i].loanFee += (nCDueDateAndCurrentDate * 1) - 1;
+                            }else{
                                 overdueLoans[i].loanFee += 1;
                             }
-
-                            await overdueLoans[i].save();
                         }
-
-                    }else{
+                            overdueLoans[i].lastFeeDateUpdate = currentD;
+                            await overdueLoans[i].save();
+                    } else{
                         continue;
                     }
-                }
+                }  
             }catch(error){
                 overdueLoans = null;
                 d1 =null; 
@@ -174,7 +181,7 @@ const calculateFees = async () =>{
     
 }
 
-//Check reservation expirations
+//Check reservation expirations (Tested)
 const checkResExpiration = async () =>{
     let d1 = new Date(); //Current date 
     let d2 = null; // Reservation date expiration
@@ -182,7 +189,7 @@ const checkResExpiration = async () =>{
     let offset = 0;
 
     //Date variables 
-    let currentD = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    let currentD = new Date(d1.getUTCFullYear(), d1.getUTCMonth(), d1.getUTCDate());
     let resExpD = null;
     let recDelCount = 0;
 
@@ -201,7 +208,7 @@ const checkResExpiration = async () =>{
                 for(let i = 0; i < reserves.length; i++){
                     d2 = new Date(reserves[i].resDateExpiry);
 
-                    resExpD = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+                    resExpD = new Date(d2.getUTCFullYear(), d2.getUTCMonth(), d2.getUTCDate());
 
                     bCResExpDAndCurD = currentD > resExpD;
 
