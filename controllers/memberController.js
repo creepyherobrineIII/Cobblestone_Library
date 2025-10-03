@@ -47,6 +47,8 @@ const getMemberById = async (req, res) =>{
 //Create new member account
 const createMember = async(req, res) =>{
     try{
+        console.log(req.body);
+
         let newMember = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
