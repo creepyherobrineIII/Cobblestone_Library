@@ -44,6 +44,11 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false
         },
 
+        picturePath:{
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+
         isActive:{
             type: DataTypes.BOOLEAN,
             defaultValue: true

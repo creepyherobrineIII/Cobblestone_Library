@@ -25,7 +25,12 @@ module.exports = (sequelize, DataTypes) =>{
        password:{
         type: DataTypes.STRING,
         allowNull: false
-       }
+       },
+
+       picturePath:{
+        type: DataTypes.TEXT,
+        allowNull: true
+        },
     },{
         paranoid: true,
         deletedAt: 'LibAccDelDate'
