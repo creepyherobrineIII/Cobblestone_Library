@@ -10,8 +10,7 @@ module.exports = (Sequelize, DataTypes) => {
 
         MemberCardID:{
             type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
+            allowNull: false
         },
 
         firstName:{
