@@ -17,6 +17,7 @@ const booksRouter = require('./routes/booksRouter.js');
 const bookInventory = require('./routes/bookInventoryRouter.js');
 const reserveRouter = require('./routes/reserveRouter.js');
 const loansRouter = require('./routes/loansRouter.js');
+const loginRouter = require('./routes/loginRouter.js');
 
 //Mounting routers
 app.use('/librarian', libRouter);
@@ -25,6 +26,7 @@ app.use('/books', booksRouter);
 app.use('/inventory', bookInventory);
 app.use('/reservation', reserveRouter);
 app.use('/loans', loansRouter);
+app.use('/login', loginRouter);
 
 
 //Testing API

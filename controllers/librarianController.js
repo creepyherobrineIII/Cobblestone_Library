@@ -2,6 +2,7 @@ const db = require('../models/modelIndex.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const Librarian = db.librarian;
+const Member = db.member;
 
 //Get all librarians 
 const getLibrarians = async (req, res) =>{
@@ -59,10 +60,11 @@ const addLibrarian = async (req, res) =>{
 
         //Check if user exists already
         let libCheck = await Librarian.findAll({where: {email : admin.email}});
+        let memCheck = await Member.findAll({where: {email : admin.email}});
 
         let libAdmin;
         
-        if (libCheck.length === 0)
+        if (libCheck.length === 0 && memCheck.length === 0)
         {
             libAdmin = await Librarian.create(admin);
         } else{
@@ -84,39 +86,6 @@ const addLibrarian = async (req, res) =>{
         res.status(400).json(error.message);
     }
    
-}
-
-//Librarian login
-const librarianLogin = async (req, res) => {
-    try{
-        let libAdmin = {
-                email: req.body.email,
-                password: req.body.password
-            }
-
-        //Check if user exists
-        let libCheck = await Librarian.findOne({where: {email : libAdmin.email}});
-
-        if (libCheck === null)
-        {
-            res.status(401).json("Incorrect username/password");
-        }
-
-        //Comparing passwords
-        let passCheck = await bcrypt.compare(libAdmin.password, libCheck.password);
-
-        if(passCheck)
-        {
-            res.status(200).json(libCheck);
-        } else{
-            res.status(401).json("Incorrect username/password");
-        }
-
-        
-    } catch (error){
-        console.log('\nError Messsage:\n' + error);
-        res.status(400).json(error.message);
-    }
 }
 
 //Update librarian account
@@ -167,7 +136,6 @@ module.exports ={
     getLibrarians,
     getLibrarianById,
     addLibrarian,
-    librarianLogin,
     updateLibrarian,
     deleteLibrarian
 }

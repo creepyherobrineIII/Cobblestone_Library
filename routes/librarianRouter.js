@@ -9,9 +9,6 @@ router.get('/', librarianController.getLibrarians)
 //Get librarian by id
 router.get('/byId/:id', librarianController.getLibrarianById)
 
-//Login librarian
-router.get('/librarian-login', librarianController.librarianLogin);
-
 
 //POST Methods
 //Create new Librarian

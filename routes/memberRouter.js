@@ -9,9 +9,6 @@ router.get('/', memberController.getAllMembers);
 //Get member by Id
 router.get('/byId/:id', memberController.getMemberById);
 
-//Login member
-router.get('/member-login', memberController.memberLogin);
-
 //POST Methods
 //Create new member
 router.post('/create-member', memberController.createMember);

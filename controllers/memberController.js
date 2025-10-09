@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const saltRounds = 10;
 const Member = db.member;
 const Loans = db.loans;
+const Librarian = db.librarian;
 
 //Get all memebers
 const getAllMembers = async (req, res) =>{
@@ -60,8 +61,9 @@ const createMember = async(req, res) =>{
 
         //Check if member exists
         let memCheck = await Member.findOne({where: {email: newMember.email}});
+        let libCheck = await Librarian.findOne({where: {email: newMember.email}})
 
-        if (memCheck === null){
+        if (memCheck === null && libCheck === null){
            
             //Hash password
             const hashedPass = await bcrypt.hash(newMember.password, saltRounds);
@@ -118,7 +120,7 @@ const memberLogin = async (req, res) =>{
         }
 
         //Search for member
-         let memCheck = await Member.findOne({where: {email: loggingMem.email}});
+         
 
         if (memCheck.length !== 0){
             const passCheck = await bcrypt.compare(loggingMem.password, memCheck.password);
@@ -202,7 +204,6 @@ module.exports = {
     getAllMembers,
     getMemberById,
     createMember,
-    memberLogin,
     updateMember,
     delMember
 }
