@@ -30,7 +30,7 @@ module.exports = (Sequelize, DataTypes) => {
         },
 
         genre:{
-            type: DataTypes.ENUM('Arts', 'Business & Finance', 'Children\'s Books', 'Fiction', 'Health & Wellness', 'Non-fiction', 'Science, Technology & Mathematics', 'Social Sciences', 'Textbooks'),
+            type: DataTypes.ENUM('Arts', 'Business & Finance', 'Children\'s Books', 'Fiction', 'Health & Wellness', 'Non-fiction','Religious', 'Science, Technology & Mathematics', 'Social Sciences', 'Textbooks'),
             allowNull:false
         },
 
@@ -46,7 +46,7 @@ module.exports = (Sequelize, DataTypes) => {
 
         edition:{
             type: DataTypes.STRING(10),
-            allowNull: false
+            allowNull: true
         },
 
         publisher:{
