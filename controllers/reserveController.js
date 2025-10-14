@@ -4,6 +4,8 @@ const { Op } = require('sequelize');
 const Reservations = db.reservations;
 const BookInventory = db.bookInventory;
 const Loans = db.loans;
+const Books = db.books;
+const Member = db.member;
 
 //Get all reservations
 const getAllReservations = async (req, res) =>{ //Active reservations
@@ -27,7 +29,9 @@ const getReservationById = async (req, res) =>{
     try{
         let reserveId = req.params.id;
 
-        if(reserveID > 0)
+        console.log(reserveId);
+w
+        if(reserveId > 0)
         {
             let reserveRec = await Reservations.findOne({where: {id: reserveId}});
 

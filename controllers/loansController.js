@@ -66,6 +66,7 @@ const getLoansForMem = async (req, res) =>{
     }
 }
 
+
 //Get all loan history for one book
 const getLoansForBook = async (req, res) =>{
     try{
@@ -137,7 +138,7 @@ const createLoan = async (req, res) =>{
 
                     let dueDate = new Date(startDate);
 
-                    returnDate.setDate(startDate.getDate() + 14);
+                    dueDate.setDate(startDate.getDate() + 14);
 
                     newLoan.loanDueDate = dueDate;
 

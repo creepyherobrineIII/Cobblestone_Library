@@ -13,7 +13,7 @@ router.get('/byId/:id', reservationController.getReservationById);
 router.get('/book-isbn/:BookISBN', reservationController.getReservationByBook);
 
 //Get reservation by member id
-router.get('/member-id/:MemberId', reservationController.getAllReservations);
+router.get('/member-id/:MemberId', reservationController.getReservationByMemId);
 
 //POST Methods
 //Add new reservation

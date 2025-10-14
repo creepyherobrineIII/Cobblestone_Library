@@ -60,6 +60,7 @@ db.member.hasMany(db.loans,{
     sourceKey: 'MemberCardID',
     foreignKey: 'MemberId'
 });
+db.loans.belongsTo(db.member);
 
 db.member.addHook('afterDestroy', async (mem, options) =>{
     await db.loans.destroy({where: {MemberId: mem.MemberCardID}, paranoid: true})
@@ -71,6 +72,7 @@ db.member.hasMany(db.reservations,{
     sourceKey: 'MemberCardID',
     foreignKey: 'MemberId'
 });
+db.reservations.belongsTo(db.member);
 
 db.member.addHook('afterDestroy', async (mem, options) =>{
     await db.reservations.destroy({where: {MemberId: mem.MemberCardID}})
@@ -82,6 +84,7 @@ db.books.hasMany(db.loans,{
     foreignKey: 'BookISBN'
 });
 
+
 db.books.addHook('afterDestroy', async (book, options) =>{
     await db.loans.destroy({where: {BookISBN: book.ISBN}, paranoid: true});
 });
@@ -91,6 +94,7 @@ db.books.hasMany(db.reservations,{
     sourceKey: 'ISBN',
     foreignKey: 'BookISBN'
 });
+
 
 db.books.addHook('afterDestroy', async (book, options) =>{
     await db.reservations.destroy({where: {BookISBN: book.ISBN}})
