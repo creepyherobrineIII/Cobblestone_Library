@@ -123,6 +123,7 @@ const addBook = async (req, res) =>{
 const updateBook = async (req, res) =>{
    try{
         let bookUpdate = {
+            id: req.body.id,
             ISBN: req.body.ISBN,
             bookTitle: req.body.bookTitle,
             author: req.body.author,
@@ -136,12 +137,12 @@ const updateBook = async (req, res) =>{
             picture: req.body.picture
         };
 
-        let bookConf = await Books.update(bookUpdate, {where: {ISBN: bookUpdate.ISBN}, returning: true});
+        let bookConf = await Books.update(bookUpdate, {where: {id: bookUpdate.id}, returning: true});
 
-        console.log(bookConf);
+        let updatedBook = await Books.findOne({where: {ISBN: bookUpdate.ISBN}})
 
         if (bookConf[1] !== 0){
-            res.status(201).json('Updated book details:');
+            res.status(201).json(updatedBook);
         }else{
             res.status(400).json('Unable to update book');
         }

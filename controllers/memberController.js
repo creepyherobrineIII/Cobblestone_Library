@@ -143,21 +143,25 @@ const memberLogin = async (req, res) =>{
 const updateMember = async (req, res) =>{
     try{
         let updatedMember = {
+            id: req.body.id,
             firstName: req.body.firstName,
             MemberCardID: req.body.MemberCardID,
             lastName: req.body.lastName,
             phoneNo: req.body.phoneNo,
             address: req.body.address,
             email:  req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            picturePath: req.body.picturePath
         }
 
         updatedMember.password = await bcrypt.hash(req.body.password, saltRounds);
                 
-        const updatedMem = await Member.update(updatedMember, {where: {MemberCardID: updatedMember.MemberCardID}, returning: true});
+        const updatedMem = await Member.update(updatedMember, {where: {id: updatedMember.id}, returning: true});
 
+        let updatedMemDetails = await Member.findOne({where: {MemberCardID: updatedMember.MemberCardID}});
+        
         if (updatedMem[1] !== 0){
-            res.status(201).json("Updated member details");
+            res.status(201).json(updatedMemDetails);
         }else{
             res.status(400).json('Member does not exist')
         }

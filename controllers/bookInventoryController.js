@@ -100,15 +100,18 @@ const addBookToInventory = async (req, res) =>{
 const updateInventory = async (req, res) =>{
     try{
         let reqUpdatedInven = {
+            id: req.body.id,
             BookISBN: req.body.BookISBN,
             totalCopies: req.body.totalCopies,
             availableCopies: req.body.availableCopies
         };
 
-        let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {BookISBN: reqUpdatedInven.BookISBN}, returning: true});
+        let updatedInvRec = await BookInventory.update(reqUpdatedInven, {where: {id: reqUpdatedInven.id}, returning: true});
+
+        let updatedInven = await BookInventory.findOne({where: {BookISBN: reqUpdatedInven.BookISBN}});
 
         if (updatedInvRec[1] !== 0){
-            res.status(201).json('Updated book inventory');
+            res.status(201).json(updatedInven);
         }else{
             res.status(400).json(error.message);
         }

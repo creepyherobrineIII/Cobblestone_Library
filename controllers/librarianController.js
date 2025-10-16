@@ -92,18 +92,22 @@ const addLibrarian = async (req, res) =>{
 const updateLibrarian = async (req, res) =>{
     try{
         let updatedLib ={
+            id: req.body.id,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            picturePath: req.body.picturePath
         }
 
         updatedLib.password = await bcrypt.hash(req.body.password, saltRounds);
         
-        const updatedLibAdmin = await Librarian.update(updatedLib, {where: {email: updatedLib.email}, returning: true});
+        const updatedLibAdmin = await Librarian.update(updatedLib, {where: {id: updatedLib.id}, returning: true});
+
+        let updatedLibDetails = await Librarian.findOne({where: {email: updatedLib.email}})
 
         if (updatedLibAdmin[1] !== 0){
-            res.status(201).json("Updated librarian details");
+            res.status(201).json(updatedLibDetails);
         }else{
             res.status(400).json('Librarian to update not detected')
         }

@@ -47,7 +47,8 @@ db.reservations = require('./reservations.js')(sequelize, DataTypes);
 //Books:BookInventory
 db.books.hasOne(db.bookInventory, {
     sourceKey: 'ISBN',
-    foreignKey: 'BookISBN'
+    foreignKey: 'BookISBN',
+    onUpdate: 'CASCADE'
 });
 
 db.books.addHook('afterDestroy', async (book, options) =>{
@@ -58,7 +59,8 @@ db.books.addHook('afterDestroy', async (book, options) =>{
 //Member:Loans
 db.member.hasMany(db.loans,{
     sourceKey: 'MemberCardID',
-    foreignKey: 'MemberId'
+    foreignKey: 'MemberId',
+    onUpdate: 'CASCADE'
 });
 db.loans.belongsTo(db.member);
 
@@ -70,7 +72,8 @@ db.member.addHook('afterDestroy', async (mem, options) =>{
 //Member:Reservations
 db.member.hasMany(db.reservations,{
     sourceKey: 'MemberCardID',
-    foreignKey: 'MemberId'
+    foreignKey: 'MemberId',
+    onUpdate: 'CASCADE'
 });
 db.reservations.belongsTo(db.member);
 
@@ -81,7 +84,8 @@ db.member.addHook('afterDestroy', async (mem, options) =>{
 //Book: Loans
 db.books.hasMany(db.loans,{
     sourceKey: 'ISBN',
-    foreignKey: 'BookISBN'
+    foreignKey: 'BookISBN',
+    onUpdate: 'CASCADE'
 });
 
 
@@ -92,7 +96,8 @@ db.books.addHook('afterDestroy', async (book, options) =>{
 //Book: Reservations
 db.books.hasMany(db.reservations,{
     sourceKey: 'ISBN',
-    foreignKey: 'BookISBN'
+    foreignKey: 'BookISBN',
+    onUpdate: 'CASCADE'
 });
 
 
