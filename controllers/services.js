@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 
 const Loans = db.loans;
 const Reservations = db.reservations;
+const randVar = null;
 
 //Update loans status automatically (Tested)
 const updateLoanStatus = async ()=>{
