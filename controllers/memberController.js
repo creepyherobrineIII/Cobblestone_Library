@@ -56,6 +56,7 @@ const createMember = async(req, res) =>{
             phoneNo: req.body.phoneNo,
             address: req.body.address,
             email:  req.body.email,
+            memTitle: req.body.memTitle,
             password: req.body.password
         }
 
@@ -151,10 +152,16 @@ const updateMember = async (req, res) =>{
             address: req.body.address,
             email:  req.body.email,
             password: req.body.password,
-            picturePath: req.body.picturePath
+            picturePath: req.body.picturePath,
+            memTitle: req.body.memTitle
         }
 
-        updatedMember.password = await bcrypt.hash(req.body.password, saltRounds);
+        console.log(updatedMember);
+
+
+        if(updatedMember.password !== undefined){
+            updatedMember.password = await bcrypt.hash(req.body.password, saltRounds);
+        }
                 
         const updatedMem = await Member.update(updatedMember, {where: {id: updatedMember.id}, returning: true});
 

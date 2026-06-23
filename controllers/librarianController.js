@@ -50,7 +50,8 @@ const addLibrarian = async (req, res) =>{
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            libTitle: req.body.libTitle
         } 
         
         //Hashing password
@@ -97,10 +98,13 @@ const updateLibrarian = async (req, res) =>{
             lastName: req.body.lastName,
             email: req.body.email,
             password: req.body.password,
-            picturePath: req.body.picturePath
+            picturePath: req.body.picturePath,
+            libTitle: req.body.libTitle
         }
 
-        updatedLib.password = await bcrypt.hash(req.body.password, saltRounds);
+        if(!updatedLib.password === undefined){
+            updatedLib.password = await bcrypt.hash(req.body.password, saltRounds);
+        }
         
         const updatedLibAdmin = await Librarian.update(updatedLib, {where: {id: updatedLib.id}, returning: true});
 

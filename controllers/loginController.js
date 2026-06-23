@@ -12,6 +12,10 @@ const userLogin = async (req, res) =>{
             password: req.body.password
         };
 
+        console.log("====================");
+        console.log(user);
+        console.log("====================");
+
 
         //Check user type
         let libCheck = await Librarian.findOne({where: {email : user.email}});
@@ -28,7 +32,7 @@ const userLogin = async (req, res) =>{
                 libCheck.setDataValue("userType", "Librarian");
                 res.status(200).json(JSON.stringify(libCheck));
             } else{
-                res.status(401).json("Incorrect username/password");
+                res.status(401).json("Not finding lib");
             }
 
 
@@ -40,7 +44,7 @@ const userLogin = async (req, res) =>{
                 memCheck.setDataValue("userType", "Member");
                 res.status(200).json(JSON.stringify(memCheck));
             } else{
-                res.status(401).json("Incorrect username/password");
+                res.status(401).json("Not finding member");
             }
         }else{
             res.status(400).json("Incorrect email/password");

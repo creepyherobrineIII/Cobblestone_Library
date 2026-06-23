@@ -6,6 +6,10 @@ const Member = db.member;
 const Books = db.books;
 const Reservations = db.reservations;
 
+let daysToAddToLoan = null;
+let initialFee = null;
+let dailyLateFee = null;
+
 //Get all loans
 const getAllLoans = async (req, res) =>{
     try{
