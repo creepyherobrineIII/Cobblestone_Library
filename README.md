@@ -18,8 +18,10 @@ A responsive, enterprise-grade full-stack web application designed to streamline
 ```text
 ├── config/             # Database connection setups
 ├── controllers/        # Logical controllers processing CRUD operations
+├── migrations/         # Sequelize DB migration scripts (Schema version control)
 ├── models/             # Data schemas defining inventory properties
 ├── routes/             # Express.js REST API route declarations
+├── seeders/            # Demo data injection files for local development
 ├── index.js            # Main application entry point
 ├── package.json        # Project metadata and dependencies
 └── README.md
