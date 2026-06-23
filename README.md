@@ -40,14 +40,24 @@ A responsive, enterprise-grade full-stack web application designed to streamline
    npm install
    ```
 
-3. **Configure Environment Variables (If applicable):**
+3. **Run Database Migrations:**
+   Ensure your local development database (MySQL/PostgreSQL) is running, then execute the Sequelize CLI commands to build the tables and inject seed data:
+   ```bash
+   # Run migrations to generate tables
+   npx sequelize-db:migrate
+   
+   # (Optional) Run seeders to populate initial book catalog data
+   npx sequelize-db:seed:all
+   ```
+
+4. **Configure Environment Variables (If applicable):**
    Create a `.env` file in the root directory and specify your configurations:
    ```env
    PORT=3000
    DB_URI=your_database_connection_string
    ```
 
-4. **Launch the local development server:**
+5. **Launch the local development server:**
    ```bash
    npm start
    ```
